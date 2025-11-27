@@ -88,8 +88,8 @@ class Blockchain:
 
     def proof_of_work(self, last_proof):
         '''
-        :param last_proof:
-        :return:
+        :param last_proof: 上一个区块的工作量证明
+        :return: 区块的proof
         '''
         proof = 0
         while self.valid_proof(last_proof, proof) is False:
@@ -101,8 +101,8 @@ class Blockchain:
         '''
         自定义POW: 寻找一个数 proof，使得它与前一个区块的 proof 拼接成的字符串的 Hash 值以 4 个零开头。
         :param last_proof: 前一个区块的proof值
-        :param proof:
-        :return:
+        :param proof: 当前区块需要计算的工作量证明proof
+        :return: 验证失败返回False，验证成功返回True
         '''
         text = f"{last_proof}{proof}"
         h = hashlib.sha256(text.encode("utf-8")).hexdigest()
@@ -119,8 +119,8 @@ def main():
     print("-" * 40)
 
     #模拟挖3个区块
-    # 1. 创建交易
     for i in range(3):
+        # 1. 创建交易
         blockchain.new_transaction(f'Alice{i}', f'Bob{i}', 100)
         blockchain.new_transaction('system', 'Satoshi', 100)
 
