@@ -26,3 +26,14 @@ python3 pow_decert_01.py
 ```bash
 python3 pow_decert_cli.py --name ticsmts --zeros 5
 ```
+
+---
+文件： pow_rsa_sign.py  
+
+题目链接：https://decert.me/challenge/45779e03-7905-469e-822e-3ec3746d9ece
+
+功能: 对挖矿结果进行签名，然后使用公钥进行验证。
+
+```bash
+python3 pow_rsa_sign.py --name ticsmts --zeros 5
+```
