@@ -4,7 +4,7 @@
 
 ## 1. PoW 实践题（decert.me）
 
-文件：`pow_test.py`  
+文件：`pow_decert_01.py`  
 
 题目链接：https://decert.me/challenge/45779e03-7905-469e-822e-3ec3746d9ece 
 
@@ -13,5 +13,5 @@
 ### 运行方式
 
 ```bash
-python pow_test.py
+python pow_decert_01.py
 
