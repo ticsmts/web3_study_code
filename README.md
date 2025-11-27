@@ -13,5 +13,16 @@
 ### 运行方式
 
 ```bash
-python pow_decert_01.py
+python3 pow_decert_01.py
+```
 
+
+文件：`pow_decert_args.py` 
+
+功能： 给pow_decert_01.py添加命令行功能
+
+功能：命令行接受--name 昵称，及--zeros 前置0数量，实现命令行功能。
+
+```bash
+python3 pow_decert_args.py --name ticsmts --zeros 5
+```
