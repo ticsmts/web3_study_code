@@ -5,7 +5,7 @@ import time
 import argparse 
 
 
-def mine_test(nickname, zero_count):
+def mine(nickname, zero_count):
     nonce = 0 
     prefix_zeros = zero_count * "0"
     start = time.perf_counter()
@@ -13,7 +13,7 @@ def mine_test(nickname, zero_count):
     while True:
         text = f"{nickname}{nonce}"
         h = hashlib.sha256(text.encode("utf-8")).hexdigest()
-        if(h.startswith(prefix_zeros)):
+        if h.startswith(prefix_zeros):
             end = time.perf_counter()
             use_time = end - start
             return nonce, text, h, use_time
@@ -26,8 +26,10 @@ def run():
     parser.add_argument("--zeros", type=int, default=4, help="哈希值的前置0数量")
 
     args = parser.parse_args()
+    if args.zeros <= 0:
+        parser.error("--zeors 必须为正整数")
     
-    nonce1, text1, h1, use_time1 = mine_test(args.name, args.zeros)
+    nonce1, text1, h1, use_time1 = mine(args.name, args.zeros)
     print(f"耗时: {use_time1:.6f} 秒")
     print(f"Hash 内容: {text1}")
     print(f"Hash 值:   {h1}")
