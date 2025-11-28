@@ -4,9 +4,11 @@ pip install flask requests
 
 ## 启动2个区块链节点
 python3 blockchain_node_useFlask.py --port 5000
+
 python3 blockchain_node_useFlask.py --port 5001
 
 节点1功能测试：http://127.0.0.1:5000/
+
 节点2功能测试：http://127.0.0.1:5001/
 
 ## 调用/node, 查看当前节点的区块链
