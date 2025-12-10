@@ -53,3 +53,18 @@ python3 pow_rsa_sign.py --name ticsmts --zeros 5
 ```bash
 python3 mini_blockchain.py
 ```
+
+---
+## 3. Solidity 
+文件：`helloWorld_Solidity.sol`
+
+题目链接：https://decert.me/quests/61289231665986005978714272641295754558731174328007379661370918963875971676821
+
+功能：
+
+使用 Remix 创建一个 Counter 合约并部署到任意以太坊测试网:
+Counter 合约具有
+ 1. 一个状态变量 counter
+ 2. get()方法: 获取 counter 的值
+ 3. add(x) 方法: 给变量加上 x 。
+
