@@ -68,3 +68,16 @@ Counter 合约具有
  2. get()方法: 获取 counter 的值
  3. add(x) 方法: 给变量加上 x 。
 
+---
+# 4. Solidity 实现基础Bank 
+文件夹：`Bank`
+
+题目链接：https://decert.me/quests/c43324bc-0220-4e81-b533-668fa644c1c3
+
+功能：
+
+编写一个 Bank 合约，实现功能:
+   1. 可以通过 Metamask 等钱包直接给 Bank 合约地址存款
+   2. 在 Bank 合约记录每个地址的存款金额
+   3. 编写 withdraw() 方法，仅管理员可以通过该方法提取资金。
+   4. 用数组记录存款金额的前 3 名用户
