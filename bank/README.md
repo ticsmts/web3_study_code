@@ -1,6 +1,6 @@
 # 实现 Bank 功能
 
-## 启动本地 HTTP SERVER,以访问前端功能
+## 启动本地 Http Server, 以访问前端功能
 python -m http.server 8000
 
 ## 实现
