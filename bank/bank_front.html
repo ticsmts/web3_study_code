@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bank 合约前端示例</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ethers.js v5 -->
+  <script src="https://unpkg.com/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #020617;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.15);
+      --accent-hover: #16a34a;
+      --border: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #ef4444;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 980px;
+      margin: 20px;
+      background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
+      border-radius: 20px;
+      border: 1px solid rgba(148,163,184,0.35);
+      box-shadow: 0 18px 40px rgba(15,23,42,0.9);
+      padding: 18px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(148,163,184,0.4);
+      padding-bottom: 10px;
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title {
+      font-size: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      color: var(--muted);
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .wallet-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--danger);
+      box-shadow: 0 0 8px rgba(239,68,68,0.7);
+    }
+
+    .dot.connected {
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(34,197,94,0.8);
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #022c22;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.16s ease-out;
+    }
+
+    .btn.secondary {
+      background: rgba(15,23,42,0.9);
+      color: var(--text);
+      border-color: rgba(148,163,184,0.7);
+    }
+
+    .btn.danger {
+      border-color: var(--danger);
+      background: rgba(127,29,29,0.9);
+      color: #fee2e2;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(34,197,94,0.35);
+      background: var(--accent-hover);
+    }
+
+    .btn.secondary:hover:not(:disabled) {
+      box-shadow: 0 10px 20px rgba(59,130,246,0.35);
+      background: rgba(30,64,175,0.9);
+      border-color: rgba(191,219,254,0.9);
+    }
+
+    .btn.danger:hover:not(:disabled) {
+      box-shadow: 0 10px 20px rgba(239,68,68,0.45);
+      background: rgba(185,28,28,0.95);
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 860px) {
+      .content {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    .panel {
+      background: radial-gradient(circle at top left, rgba(34,197,94,0.08), rgba(15,23,42,0.98));
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 12px 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .panel-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .card {
+      background: rgba(15,23,42,0.96);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(55,65,81,0.9);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .card-title {
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 12px;
+    }
+
+    .info-label {
+      color: var(--muted);
+    }
+
+    .info-value {
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .input {
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.9);
+      background: rgba(15,23,42,0.95);
+      padding: 6px 10px;
+      font-size: 13px;
+      color: var(--text);
+      outline: none;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.7);
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 6px 4px;
+      border-bottom: 1px solid rgba(31,41,55,0.9);
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-bar {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .status-msg {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tag {
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148,163,184,0.6);
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .addr-mono {
+      font-family: "JetBrains Mono", ui-monospace;
+      font-size: 11px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="title-block">
+      <div class="title">
+        Bank 合约 Demo
+        <span class="pill">最小 DApp 示例</span>
+      </div>
+      <div class="subtitle">
+        通过网页与 Bank 合约交互：存款、查看余额、TOP3 榜单、管理员提现。
+      </div>
+    </div>
+    <div class="wallet-info">
+      <div class="badge-row">
+        <span id="network-label" class="pill">网络：未连接</span>
+        <span id="contract-label" class="pill">合约：未设置</span>
+      </div>
+      <div class="badge-row">
+        <span id="conn-dot" class="dot"></span>
+        <span id="account-label" class="addr-mono">未连接钱包</span>
+        <button id="connect-btn" class="btn secondary">连接钱包</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="content">
+    <!-- 左侧：用户操作区 -->
+    <section class="panel">
+      <div class="panel-header">
+        <div class="panel-title">用户操作</div>
+        <span class="tag">Bank 合约交互</span>
+      </div>
+      <div class="panel-body">
+        <!-- 概览 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">账户概览</div>
+            <span class="tag" id="owner-tag">普通用户</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">当前地址在合约中的余额：</span>
+            <span class="info-value" id="my-bank-balance">-</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">当前地址钱包 ETH 余额：</span>
+            <span class="info-value" id="my-wallet-balance">-</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">合约 ETH 总余额：</span>
+            <span class="info-value" id="contract-balance">-</span>
+          </div>
+        </div>
+
+        <!-- 存款 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">存款到 Bank</div>
+            <span class="tag">deposit()</span>
+          </div>
+          <div class="input-row">
+            <input
+              id="deposit-amount"
+              class="input"
+              placeholder="输入要存入的 ETH 数量，例如 0.01"
+              type="number"
+              step="0.0001"
+              min="0"
+            />
+            <button id="deposit-btn" class="btn">存款</button>
+          </div>
+          <div class="hint">
+            存款本质上是一次调用 <code>deposit()</code> 的交易，附带指定数量的 ETH（msg.value）。
+          </div>
+        </div>
+
+        <!-- 只读查询某个地址余额 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">查询任意地址余额</div>
+            <span class="tag">getBalance(address)</span>
+          </div>
+          <div class="input-row">
+            <input
+              id="query-address"
+              class="input"
+              placeholder="输入要查询的地址（不填默认当前地址）"
+            />
+            <button id="query-btn" class="btn secondary">查询</button>
+          </div>
+          <div class="hint" id="query-result">结果：-</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 右侧：排行榜 & 管理员区 -->
+    <section class="panel">
+      <div class="panel-header">
+        <div class="panel-title">榜单 & 管理员</div>
+        <span class="tag">Top 3 & Withdraw</span>
+      </div>
+      <div class="panel-body">
+        <!-- Top3 -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">存款 TOP 3 用户</div>
+            <button id="refresh-top-btn" class="btn secondary" style="padding:4px 10px;font-size:11px;">刷新</button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th style="width:20px;">#</th>
+                <th>地址</th>
+                <th style="width:120px;">存款金额（ETH）</th>
+              </tr>
+            </thead>
+            <tbody id="top-table-body">
+              <tr><td>1</td><td>-</td><td>-</td></tr>
+              <tr><td>2</td><td>-</td><td>-</td></tr>
+              <tr><td>3</td><td>-</td><td>-</td></tr>
+            </tbody>
+          </table>
+          <div class="hint">
+            排行榜根据 <code>balances[user]</code> 排序，只显示存款金额前 3 名。
+          </div>
+        </div>
+
+        <!-- 管理员提现 -->
+        <div class="card" id="admin-card" style="display:none;">
+          <div class="card-header">
+            <div class="card-title">管理员提现</div>
+            <span class="tag">withdraw()</span>
+          </div>
+          <div class="input-row">
+            <input
+              id="withdraw-amount"
+              class="input"
+              placeholder="提现金额（ETH）"
+              type="number"
+              step="0.0001"
+              min="0"
+            />
+          </div>
+          <div class="input-row">
+            <input
+              id="withdraw-to"
+              class="input"
+              placeholder="收款地址（留空则默认当前账户）"
+            />
+          </div>
+          <button id="withdraw-btn" class="btn danger">执行提现（仅 owner）</button>
+          <div class="hint">
+            注意：本设计中用户不能主动提现，管理员可将合约中 ETH 提到指定地址。
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="status-bar">
+    <div class="status-msg" id="status-msg">状态：未连接</div>
+    <span class="tag">POWER BY CHATGPT</span>
+  </footer>
+</div>
+
+<script>
+  // === 请在这里填入你部署好的 Bank 合约地址 ===
+  const CONTRACT_ADDRESS = "0x9478e4Ae80fB5be1d25734CBff08f2c65Dbd75d0";
+
+  // === Bank 合约 ABI（基于我们之前写的 Bank.sol）===
+  const CONTRACT_ABI = [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
+        { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" },
+        { "indexed": false, "internalType": "uint256", "name": "newBalance", "type": "uint256" }
+      ],
+      "name": "Deposit",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        { "indexed": true, "internalType": "address", "name": "to", "type": "address" },
+        { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+      ],
+      "name": "Withdraw",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        { "internalType": "address", "name": "", "type": "address" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "", "type": "address" }
+      ],
+      "name": "balances",
+      "outputs": [
+        { "internalType": "uint256", "name": "", "type": "uint256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "deposit",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMyBalance",
+      "outputs": [
+        { "internalType": "uint256", "name": "", "type": "uint256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "user", "type": "address" }
+      ],
+      "name": "getBalance",
+      "outputs": [
+        { "internalType": "uint256", "name": "", "type": "uint256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTopDepositors",
+      "outputs": [
+        {
+          "components": [
+            { "internalType": "address", "name": "user", "type": "address" },
+            { "internalType": "uint256", "name": "amount", "type": "uint256" }
+          ],
+          "internalType": "struct Bank.TopDepositor[3]",
+          "name": "",
+          "type": "tuple[3]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "", "type": "uint256" }
+      ],
+      "name": "topDepositors",
+      "outputs": [
+        { "internalType": "address", "name": "user", "type": "address" },
+        { "internalType": "uint256", "name": "amount", "type": "uint256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "uint256", "name": "amount", "type": "uint256" },
+        { "internalType": "address payable", "name": "to", "type": "address" }
+      ],
+      "name": "withdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ];
+
+  let provider;
+  let signer;
+  let contract;
+  let currentAccount = null;
+  let ownerAddress = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  function shorten(addr) {
+    if (!addr) return "-";
+    return addr.slice(0, 6) + "..." + addr.slice(-4);
+  }
+
+  function setStatus(msg, isError = false) {
+    $("status-msg").textContent = "状态：" + msg;
+    $("status-msg").style.color = isError ? "#fca5a5" : "var(--muted)";
+  }
+
+  async function connectWallet() {
+    try {
+      if (!window.ethereum) {
+        alert("未检测到 MetaMask 或兼容钱包。");
+        return;
+      }
+      setStatus("请求连接钱包中...");
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      currentAccount = accounts[0];
+
+      provider = new ethers.providers.Web3Provider(window.ethereum);
+      signer = provider.getSigner();
+      contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+
+      $("conn-dot").classList.add("connected");
+      $("account-label").textContent = shorten(currentAccount);
+      $("connect-btn").textContent = "已连接";
+      $("connect-btn").disabled = true;
+
+      $("contract-label").textContent = "合约：" + shorten(CONTRACT_ADDRESS);
+
+      const network = await provider.getNetwork();
+      $("network-label").textContent = "网络：" + (network.name || network.chainId);
+
+      // 读取 owner
+      ownerAddress = await contract.owner();
+      const isOwner = currentAccount.toLowerCase() === ownerAddress.toLowerCase();
+      $("owner-tag").textContent = isOwner ? "管理员（Owner）" : "普通用户";
+      $("owner-tag").style.borderColor = isOwner ? "var(--accent)" : "rgba(148,163,184,0.6)";
+      $("owner-tag").style.color = isOwner ? "#bbf7d0" : "var(--muted)";
+      $("admin-card").style.display = isOwner ? "flex" : "none";
+
+      await refreshInfo();
+      await refreshTopDepositors();
+
+      setStatus("钱包已连接，数据加载完成");
+    } catch (err) {
+      console.error(err);
+      setStatus("连接失败：" + (err.message || err), true);
+    }
+  }
+
+  async function refreshInfo() {
+    if (!provider || !contract || !currentAccount) return;
+    try {
+      const [myBankBalWei, myWalletBalWei, contractBalWei] = await Promise.all([
+        contract.getMyBalance(),
+        provider.getBalance(currentAccount),
+        provider.getBalance(CONTRACT_ADDRESS)
+      ]);
+
+      $("my-bank-balance").textContent = ethers.utils.formatEther(myBankBalWei) + " ETH";
+      $("my-wallet-balance").textContent = ethers.utils.formatEther(myWalletBalWei) + " ETH";
+      $("contract-balance").textContent = ethers.utils.formatEther(contractBalWei) + " ETH";
+    } catch (err) {
+      console.error(err);
+      setStatus("刷新余额失败：" + (err.message || err), true);
+    }
+  }
+
+  async function refreshTopDepositors() {
+    if (!contract) return;
+    try {
+      const top = await contract.getTopDepositors();
+      const tbody = $("top-table-body");
+      tbody.innerHTML = "";
+
+      for (let i = 0; i < top.length; i++) {
+        const row = document.createElement("tr");
+        const rankCell = document.createElement("td");
+        rankCell.textContent = (i + 1).toString();
+
+        const addrCell = document.createElement("td");
+        const amountCell = document.createElement("td");
+
+        if (!top[i].user || top[i].user === ethers.constants.AddressZero || top[i].amount.eq(0)) {
+          addrCell.textContent = "-";
+          amountCell.textContent = "-";
+        } else {
+          addrCell.textContent = shorten(top[i].user);
+          amountCell.textContent = ethers.utils.formatEther(top[i].amount) + " ETH";
+        }
+
+        row.appendChild(rankCell);
+        row.appendChild(addrCell);
+        row.appendChild(amountCell);
+        tbody.appendChild(row);
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus("获取排行榜失败：" + (err.message || err), true);
+    }
+  }
+
+  async function handleDeposit() {
+    if (!contract || !signer) {
+      alert("请先连接钱包");
+      return;
+    }
+    const amountStr = $("deposit-amount").value.trim();
+    if (!amountStr || Number(amountStr) <= 0) {
+      alert("请输入大于 0 的存款金额（ETH）");
+      return;
+    }
+
+    try {
+      setStatus("发起存款交易中...");
+      $("deposit-btn").disabled = true;
+
+      const valueWei = ethers.utils.parseEther(amountStr);
+      const tx = await contract.deposit({ value: valueWei });
+      setStatus("交易发送，等待链上确认...（tx: " + tx.hash.slice(0,10) + "…）");
+      await tx.wait();
+
+      setStatus("存款成功，正在刷新数据...");
+      $("deposit-amount").value = "";
+      await refreshInfo();
+      await refreshTopDepositors();
+      setStatus("存款成功 ✅");
+    } catch (err) {
+      console.error(err);
+      setStatus("存款失败：" + (err.data?.message || err.message || err), true);
+    } finally {
+      $("deposit-btn").disabled = false;
+    }
+  }
+
+  async function handleQueryBalance() {
+    if (!contract) {
+      alert("请先连接钱包");
+      return;
+    }
+    let addr = $("query-address").value.trim();
+    if (!addr) {
+      addr = currentAccount;
+    }
+    try {
+      const bal = await contract.getBalance(addr);
+      $("query-result").textContent = `结果：地址 ${shorten(addr)} 的存款余额为 ${ethers.utils.formatEther(bal)} ETH`;
+    } catch (err) {
+      console.error(err);
+      setStatus("查询失败：" + (err.message || err), true);
+      $("query-result").textContent = "结果：查询失败";
+    }
+  }
+
+  async function handleWithdraw() {
+    if (!contract || !signer) {
+      alert("请先连接钱包");
+      return;
+    }
+    if (!ownerAddress || currentAccount.toLowerCase() !== ownerAddress.toLowerCase()) {
+      alert("当前地址不是合约 owner，不能执行提现");
+      return;
+    }
+
+    const amountStr = $("withdraw-amount").value.trim();
+    let to = $("withdraw-to").value.trim();
+
+    if (!amountStr || Number(amountStr) <= 0) {
+      alert("请输入要提现的 ETH 数量");
+      return;
+    }
+
+    if (!to) {
+      to = currentAccount;
+    }
+
+    if (!ethers.utils.isAddress(to)) {
+      alert("收款地址格式不正确");
+      return;
+    }
+
+    try {
+      setStatus("发起提现交易中...");
+      $("withdraw-btn").disabled = true;
+
+      const amountWei = ethers.utils.parseEther(amountStr);
+      const tx = await contract.withdraw(amountWei, to);
+      setStatus("提现交易已发送，等待确认...（tx: " + tx.hash.slice(0,10) + "…）");
+      await tx.wait();
+
+      setStatus("提现成功，刷新中...");
+      await refreshInfo();
+      setStatus("提现成功 ✅");
+    } catch (err) {
+      console.error(err);
+      setStatus("提现失败：" + (err.data?.message || err.message || err), true);
+    } finally {
+      $("withdraw-btn").disabled = false;
+    }
+  }
+
+  // 绑定事件
+  window.addEventListener("load", () => {
+    $("connect-btn").addEventListener("click", connectWallet);
+    $("deposit-btn").addEventListener("click", handleDeposit);
+    $("query-btn").addEventListener("click", handleQueryBalance);
+    $("refresh-top-btn").addEventListener("click", refreshTopDepositors);
+    $("withdraw-btn").addEventListener("click", handleWithdraw);
+
+    if (CONTRACT_ADDRESS && CONTRACT_ADDRESS.startsWith("0x") && CONTRACT_ADDRESS.length === 42) {
+      $("contract-label").textContent = "合约：" + shorten(CONTRACT_ADDRESS);
+    } else {
+      $("contract-label").textContent = "合约：未设置（请在代码中填写地址）";
+    }
+
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", () => {
+        window.location.reload();
+      });
+      window.ethereum.on("chainChanged", () => {
+        window.location.reload();
+      });
+    }
+  });
+</script>
+</body>
+</html>
