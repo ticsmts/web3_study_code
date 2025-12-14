@@ -89,6 +89,7 @@ Counter 合约具有
 功能:
 
 编写IBank接口及BigBank合约，使其满足Bank实现IBank接口，BigBank继承自Bank，同时BigBank有附加要求：
+
     1. 要求存款金额大于0.001 ether（用modifier权限控制）
     2. BigBank合约支持转移管理员。编写一个Admin合约， Admin合约有自己的Owner, 同时有一个取款函数adminWithdraw(IBank bank), adminWithdraw 中会调用 IBank 接口的withdraw方法从而把bank合约内的资金转移到Admin合约地址。
     3. BigBank和Admin合约部署后，把BigBank的管理员转移给Admin合约地址，模拟几个用户的存款，然后Admin合约的Owner地址调用adminWithdraw(IBank bank) 把BigBank的资金转移到Admin地址。
