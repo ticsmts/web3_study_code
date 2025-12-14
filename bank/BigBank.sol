@@ -30,7 +30,7 @@ interface IBank {
 
 
 
-contract Bank is IBank{
+contract Bank {
     // 管理员（合约拥有者）
     address public owner;
 
@@ -65,7 +65,7 @@ contract Bank is IBank{
     }
 
     // 可选：也提供一个显式的 deposit 函数，方便前端调用
-    function deposit() public payable override virtual{  //bug修复: 不能为external可见性，必须为public
+    function deposit() public payable virtual{  //bug修复: 不能为external可见性，必须为public
         require(msg.value > 0, "No ETH sent");
         _deposit(msg.sender, msg.value);
     }
@@ -84,12 +84,12 @@ contract Bank is IBank{
     }
 
     // 3. 查询任意地址余额（其实有 public balances 也可以）
-    function getBalance(address user) external override view returns (uint256) {
+    function getBalance(address user) external view returns (uint256) {
         return balances[user];
     }
 
     // 4. 管理员提现资金
-    function withdraw(uint256 amount, address payable to) external override onlyOwner {
+    function withdraw(uint256 amount, address payable to) external onlyOwner {
         require(amount > 0, "Amount must be > 0");
         require(address(this).balance >= amount, "Insufficient contract balance");
 
