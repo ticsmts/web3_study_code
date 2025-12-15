@@ -82,6 +82,8 @@ Counter 合约具有
    3. 编写 withdraw() 方法，仅管理员可以通过该方法提取资金。
    4. 用数组记录存款金额的前 3 名用户
 
+---
+
 文件: `Bank\BigBank.sol`
 
 题目链接: https://decert.me/challenge/063c14be-d3e6-41e0-a243-54e35b1dde58
