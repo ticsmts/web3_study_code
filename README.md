@@ -109,6 +109,17 @@ Counter 合约具有
 完成简单ERC20代币合约，实现查看余额，授权，转账等基本功能。
 
 ---
+文件: `ERC20\ZZTokenBank.sol`
+
+题目链接: https://decert.me/challenge/eeb9f7d8-6fd0-4c38-b09c-75a29bd53af3
+
+功能:
+
+编写一个 TokenBank 合约，可以将自己的 Token 存入到 TokenBank， 和从 TokenBank 取出。TokenBank 有两个方法：
+
+    1. deposit() : 需要记录每个地址的存入数量；
+    2. withdraw（）: 用户可以提取自己的之前存入的 token。
+---
 # 6. 补充：Solidity基础 代码学习
 文件夹: `solidity_basics`
 
