@@ -70,7 +70,7 @@ Counter 合约具有
 
 ---
 # 4. Solidity 实现基础Bank 
-文件夹: `Bank`
+文件: `Bank\Bank.sol`
 
 题目链接: https://decert.me/quests/c43324bc-0220-4e81-b533-668fa644c1c3
 
@@ -93,3 +93,15 @@ Counter 合约具有
     1. 要求存款金额大于0.001 ether（用modifier权限控制）
     2. BigBank合约支持转移管理员。编写一个Admin合约， Admin合约有自己的Owner, 同时有一个取款函数adminWithdraw(IBank bank), adminWithdraw 中会调用 IBank 接口的withdraw方法从而把bank合约内的资金转移到Admin合约地址。
     3. BigBank和Admin合约部署后，把BigBank的管理员转移给Admin合约地址，模拟几个用户的存款，然后Admin合约的Owner地址调用adminWithdraw(IBank bank) 把BigBank的资金转移到Admin地址。
+
+
+
+----
+# 5. 实现 ERC20 代币合约
+文件: `ERC20\ERC20.sol`
+
+题目链接: https://decert.me/quests/aa45f136-27a3-4bc9-b4f7-15308e1e0daa
+
+功能:
+
+完成简单ERC20代币合约，实现查看余额，授权，转账等基本功能。
