@@ -6,7 +6,7 @@
 
 文件: `pow_decert_01.py`  
 
-题目链接: https://decert.me/challenge/45779e03-7905-469e-822e-3ec3746d9ece 
+题目链接: https://decert.me/quests/45779e03-7905-469e-822e-3ec3746d9ece 
 
 功能: 用昵称 + nonce 进行 SHA256 计算，模拟工作量证明，寻找满足指定前导  个数的哈希值。
 
@@ -30,7 +30,7 @@ python3 pow_decert_cli.py --name ticsmts --zeros 5
 ---
 文件: pow_rsa_sign.py  
 
-题目链接: https://decert.me/challenge/45779e03-7905-469e-822e-3ec3746d9ece
+题目链接: https://decert.me/quests/45779e03-7905-469e-822e-3ec3746d9ece
 
 功能:  对挖矿结果进行签名，然后使用公钥进行验证。
 
@@ -42,7 +42,7 @@ python3 pow_rsa_sign.py --name ticsmts --zeros 5
 ## 2. 模拟实现最小的区块链
 文件: `mini_blockchain.py`
 
-题目链接: https://decert.me/challenge/ed2d8324-54b0-4b7a-9cee-5e97d3c30030
+题目链接: https://decert.me/quests/ed2d8324-54b0-4b7a-9cee-5e97d3c30030
 
 功能: 
 
@@ -86,7 +86,7 @@ Counter 合约具有
 
 文件: `Bank\BigBank.sol`
 
-题目链接: https://decert.me/challenge/063c14be-d3e6-41e0-a243-54e35b1dde58
+题目链接: https://decert.me/quests/063c14be-d3e6-41e0-a243-54e35b1dde58
 
 功能:
 
@@ -111,7 +111,7 @@ Counter 合约具有
 ---
 文件: `ERC20\ZZTokenBank.sol`
 
-题目链接: https://decert.me/challenge/eeb9f7d8-6fd0-4c38-b09c-75a29bd53af3
+题目链接: https://decert.me/quests/eeb9f7d8-6fd0-4c38-b09c-75a29bd53af3
 
 功能:
 
@@ -119,6 +119,18 @@ Counter 合约具有
 
     1. deposit() : 需要记录每个地址的存入数量；
     2. withdraw（）: 用户可以提取自己的之前存入的 token。
+---
+
+文件: `ERC20\ZZTokenBankV2.sol`
+
+题目链接: https://decert.me/quests/4df553df-fbab-49c8-a05f-83256432c6af
+
+功能:
+
+扩展 ERC20 合约 ，添加一个有hook 功能的转账函数，如函数名为：transferWithCallback ，在转账时，如果目标地址是合约地址的话，调用目标地址的 tokensReceived() 方法。
+    
+    1. 继承 TokenBank 编写 TokenBankV2，支持存入扩展的 ERC20 Token，用户可以直接调用 transferWithCallback 将扩展的 ERC20 Token 存入到 TokenBankV2 中。
+    2. TokenBankV2 需要实现 tokensReceived 来实现存款记录工作。
 ---
 # 6. 补充：Solidity基础 代码学习
 文件夹: `solidity_basics`
