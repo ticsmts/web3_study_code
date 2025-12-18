@@ -1,3 +1,33 @@
-.idea/
-.vscode/
+# Foundry build artifacts / cache
+out/
+cache/
+broadcast/
+
+# Foundry local dependencies (choose one strategy)
+lib/
+# 如果你用 git submodule 管理 lib/，就删掉上面这一行
+
+# Env / secrets
 .env
+.env.*
+! .env.example
+
+# Logs
+*.log
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node (if you add frontend later)
+node_modules/
+dist/
+build/
+.next/
+coverage/
+*.tsbuildinfo
+
+# Misc
+.DS_Store?
