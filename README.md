@@ -132,9 +132,85 @@ Counter 合约具有
     1. 继承 TokenBank 编写 TokenBankV2，支持存入扩展的 ERC20 Token，用户可以直接调用 transferWithCallback 将扩展的 ERC20 Token 存入到 TokenBankV2 中。
     2. TokenBankV2 需要实现 tokensReceived 来实现存款记录工作。
 ---
+
 # 6. 补充：Solidity基础 代码学习
 文件夹: `solidity_basics`
 
 功能:
 
 Solidity 基础知识，方便查阅，后续补充完整。
+
+---
+
+# 7. 学习 ERC721 NFT 相关知识
+文件: `ERC721\ERC721.sol`
+
+题目链接: https://decert.me/quests/44422409934343079786063971789166937234174343060396376783106591556071947050149
+
+功能:
+
+创建一个遵循 ERC721 标准的智能合约，该合约能够用于在以太坊区块链上铸造与交易 NFT。
+
+---
+文件: `ERC721\NFTMarket\ZZNFTMarket.sol`
+
+题目链接: https://decert.me/quests/94799378334494196719554698703092354231387604736360075935626034744730539670014
+
+功能:
+
+
+    编写一个简单的NFTMarket合约，使用自己发行的ERC20 扩展 Token 来买卖 NFT，NFTMarket 的函数有：
+
+    1. list(): 实现上架功能，NFT 持有者可以设定一个价格（需要多少个 Token购买该NFT）并上架 NFT 到 NFTMarket，上架之后，其他人才可以购买。
+    2. buyNFT(): 普通的购买NFT功能，用户转入所定价的token数量，获得对应的NFT。
+    3. 实现ERC20扩展Token所要求的接收者方法tokensReceived ，在 tokensReceived中实现NFT购买功能(注意扩展的转账需要添加一个额外数据参数)。
+
+# 8. Foundry 开发框架学习
+
+文件夹: `ERC20\OpenZeppelinERC20`
+
+题目链接: https://decert.me/quests/4df553df-fbab-49c8-a05f-83256432c6af
+
+功能: 
+
+    将下方合约部署到 https://sepolia.etherscan.io/ ，要求如下:
+    1. 要求使用你在 Decert.met 登录的钱包来部署合约  
+    2. 要求贴出编写 forge script 的脚本合约  
+    3. 合约在 https://sepolia.etherscan.io/ 中开源
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.25;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
+
+contract MyToken is ERC20 { 
+    constructor(string name_, string symbol_) ERC20(name_, symbol_) {
+        _mint(msg.sender, 1e10*1e18);
+    } 
+}
+
+```
+---
+
+题目链接: https://decert.me/quests/10006
+
+题目描述: Foundry 基础知识相关测试。
+
+---
+
+文件夹: `Foundry\TestStudy`
+
+题目链接: 
+https://decert.me/quests/10006
+
+
+功能:
+
+    为 Bank 合约 编写测试。测试Case包含：
+    1. 断言检查存款前后用户在 Bank 合约中的存款额更新是否正确。
+    2. 检查存款金额的前 3 名用户是否正确，分别检查有1个、2个、3个、4 个用户， 以及同一个用户多次存款的情况。
+    3. 检查只有管理员可取款，其他人不可以取款。
+
+---
