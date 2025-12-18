@@ -1,0 +1,9 @@
+# Default: keep LF in repo
+* text=auto eol=lf
+
+# Solidity / Foundry configs explicitly LF
+*.sol     text eol=lf
+*.toml    text eol=lf
+*.lock    text eol=lf
+.gitmodules text eol=lf
+*.md      text eol=lf
