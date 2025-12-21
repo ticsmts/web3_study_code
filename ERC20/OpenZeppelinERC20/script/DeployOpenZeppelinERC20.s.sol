@@ -38,6 +38,9 @@ cast abi-encode "constructor(string,string)" "OpenZeppelinERC20" "OZE"
 forge verify-contract  0x60cbc463da83627419f7c244fd16f8f85b8c57d8  src/OpenZeppelinERC20.sol:OpenZeppelinERC20  --chain sepolia --compiler-version v0.8.25  --constructor-args 0x0000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000114f70656e5a657070656c696e455243323000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000034f5a450000000000000000000000000000000000000000000000000000000000  --etherscan-api-key xxx
 forge verify-check lal9emkyymjkua99uavdx5qr761yvxq91sifmk4dmpcdgvngm8
 
+# foundry直接开源验证, 会自动根据deploy脚本添加参数: 
+forge verify-contract --watch --chain sepolia 0x60cbc463da83627419f7c244fd16f8f85b8c57d8 src/OpenZeppelinERC20.sol:OpenZeppelinERC20 --verifier etherscan --etherscan-api-key $ETHERSCAN_API_KEY
+
 */
 
 contract DeployOpenZeppelinERC20 is Script{
