@@ -1,38 +1,31 @@
-# Foundry build artifacts / cache
+########################################
+# Foundry
+########################################
+
+# build artifacts / cache
 out/
 cache/
+
+# deployment artifacts (通常不提交，除非你明确要保留)
 broadcast/
 
-# Foundry local dependencies (choose one strategy)
+# local dependencies
 lib/
-# 如果你用 git submodule 管理 lib/，就删掉上面这一行
+# 如果你用 git submodule 管理 lib/，请删除上面这一行
 
-# Env / secrets
+
+########################################
+# Env / Secrets
+########################################
+
 .env
 .env.*
-! .env.example
-
-# Logs
-*.log
-
-# OS / editor junk
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-
-# Node (if you add frontend later)
-node_modules/
-dist/
-build/
-.next/
-coverage/
-*.tsbuildinfo
+!.env.example
 
 
-#project
-ETHChaingmaiBootcampMETADATA/
-ETHChaingmaiBootcampNFT/
+########################################
+# Node / viem / frontend / listener
+########################################
 
 # dependencies
 node_modules/
@@ -40,23 +33,53 @@ node_modules/
 # build output
 dist/
 dist-ssr/
+build/
+.next/
 
-# vite cache
+# caches
 .vite/
+.cache/
+.turbo/
+.parcel-cache/
+.eslintcache
 
-# logs
+# TypeScript
+*.tsbuildinfo
+
+
+########################################
+# Logs
+########################################
+
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
 
-# OS / editor junk
-.DS_Store?
+########################################
+# Coverage / Reports
+########################################
+
+coverage/
+lcov.info
+
+
+########################################
+# OS / Editor junk
+########################################
+
+.DS_Store
 Thumbs.db
 
-# TypeScript cache
-*.tsbuildinfo
+.vscode/
+.idea/
 
-# optional: coverage (如果你跑测试)
-coverage/
+
+########################################
+# Project-specific ignores
+########################################
+
+ETHChaingmaiBootcampMETADATA/
+ETHChaingmaiBootcampNFT/
