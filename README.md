@@ -214,3 +214,33 @@ https://decert.me/quests/10006
     3. 检查只有管理员可取款，其他人不可以取款。
 
 ---
+
+# 9. Dapp 前端知识学习
+
+文件夹: `ERC20\tokenbank-viem-demo`
+
+题目链接: 
+https://decert.me/quests/56e455b3-901c-415d-90c0-a20759469cf9
+
+使用 Viem 为 TokenBank 搭建一个简单的前端
+
+功能:
+    
+    给 Token Bank 添加前端界面：
+    1. 显示当前 Token 的余额，并且可以存款(点击按钮存款)到 TokenBank
+    2. 存款后显示用户存款金额，同时支持用户取款(点击按钮取款)。
+
+---
+
+文件夹: `dapp-frontends\nftmarket-listener`
+
+题目链接: 
+https://decert.me/quests/b4698649-25b2-45ae-9bb5-23da0c49e491
+
+使⽤Viem.sh监听NFTMarket的买卖记录
+
+功能:
+    
+    在NFTMarket 合约中在上架（list）和买卖函数（buyNFT 及 tokensReceived）中添加相应事件，在后台监听上架和购买事件，如果链上发生了上架或购买行为，打印出相应的日志。
+
+
