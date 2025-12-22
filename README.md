@@ -243,4 +243,16 @@ https://decert.me/quests/b4698649-25b2-45ae-9bb5-23da0c49e491
     
     在NFTMarket 合约中在上架（list）和买卖函数（buyNFT 及 tokensReceived）中添加相应事件，在后台监听上架和购买事件，如果链上发生了上架或购买行为，打印出相应的日志。
 
+---
 
+文件夹: `dapp-frontends\zznftmarket-frontend`
+
+题目链接: 
+https://decert.me/quests/a1a9aff6-1788-4254-bc47-405cc529bbd1
+
+NFTMarket项目接入 AppKit 登录
+
+功能:
+    
+    1. 为 NFTMarket 项目添加前端，并接入 AppKit 进行前端登录，并实际操作使用 WalletConnect 进行登录（需要先安装手机端钱包）。
+    2. 在 NFTMarket 前端添加上架操作，切换另一个账号后可使用 Token 进行购买 NFT。
