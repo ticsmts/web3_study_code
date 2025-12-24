@@ -198,10 +198,10 @@ async function  cmdBuildTransfer() {
 
   //fs.writeFileSync("tx.json", JSON.stringify(txRequest, null, 2));
   const json = JSON.stringify(
-  txRequest,
-  (_, v) => (typeof v === "bigint" ? v.toString() : v),
-     2
- );
+    txRequest,
+    (_, v) => (typeof v === "bigint" ? v.toString() : v),
+    2
+  );
   fs.writeFileSync("tx.json", json);
 
 
