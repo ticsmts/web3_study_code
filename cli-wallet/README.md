@@ -30,3 +30,9 @@
 ![一次性打包签名发送交易](images/image-7.png)
 
 ![查询余额](images/image-8.png)
+
+### 生成助记词，通过助记词生成seed（BIP39）
+![alt text](images/image-9.png)
+
+### 从助记词派生第n个地址
+![alt text](images/image-10.png)
