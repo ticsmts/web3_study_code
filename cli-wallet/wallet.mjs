@@ -13,6 +13,9 @@ import {
 } from "viem";
 import { sepolia } from "viem/chains";
 import { privateKeyToAccount } from "viem/accounts";
+import { generateMnemonic, mnemonicToSeedSync } from "@scure/bip39";
+import { wordlist } from "@scure/bip39/wordlists/english.js";
+import { HDKey } from "@scure/bip32";
 
 const RPC_URL =
   process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com";
@@ -317,6 +320,38 @@ async function cmdTransfer() {
   console.log("blockNumber:", receipt.blockNumber?.toString());
 }
 
+// BIP39 + BIP32: 从助记词派生第 index 个地址（m/44'/60'/0'/0/index）
+async function cmdMnemonicAddr() {
+  const indexStr = process.argv[3];
+  const index = Number(indexStr);
+  if (!Number.isInteger(index) || index < 0) {
+    throw new Error("用法：node wallet.mjs mnemonic-addr <index> [mnemonic]");
+  }
+
+  // 允许：命令行传 mnemonic 覆盖 env（方便你临时测试）
+  const mnemonicArg = process.argv[4]; 
+  const mnemonic = getMnemonicFromEnvOrArg(mnemonicArg);
+  const passphrase = getPassphrase();
+
+  const seed = mnemonicToSeedSync(mnemonic, passphrase);
+  const root = HDKey.fromMasterSeed(seed);
+
+  const path = `m/44'/60'/0'/0/${index}`;
+  const node = root.derive(path);
+  if (!node.privateKey) throw new Error("派生失败：没有得到 privateKey");
+
+  const pkHex = `0x${Buffer.from(node.privateKey).toString("hex")}`;
+  const account = privateKeyToAccount(pkHex);
+
+  console.log("path:", path);
+  console.log("address:", account.address);
+
+  // 仅学习用：不要在真实环境随便打印私钥
+  if (process.argv.includes("--show-private-key")) {
+    console.log("privateKey:", pkHex);
+  }
+}
+
 async function main() {
   const cmd = process.argv[2];
 
@@ -330,6 +365,10 @@ async function main() {
     if (cmd === "send") return await cmdSend(process.argv[3]);
     if (cmd === "transfer") return await cmdTransfer();
 
+    if (cmd === "mnemonic-new") return await cmdMnemonicNew();
+    if (cmd === "mnemonic-addr") return await cmdMnemonicAddr();
+
+
     console.log("用法：");
     console.log("  node wallet.mjs new");
     console.log("  node wallet.mjs address");
@@ -339,11 +378,77 @@ async function main() {
     console.log("  node wallet.mjs sign tx.json");
     console.log("  node wallet.mjs send rawtx.txt");
     console.log("  node wallet.mjs transfer <token?> <to> <amount>   # 一键");
+    console.log("  node wallet.mjs mnemonic-new 12|24");
+    console.log("  node wallet.mjs mnemonic-addr <index> [mnemonic] [--show-private-key]");
+
     process.exit(1);
   } catch (e) {
     console.error("错误：", e?.message || e);
     process.exit(1);
   }
+}
+
+function getMnemonicFromEnvOrArg(maybeMnemonicArg) {
+  const mnemonic = (maybeMnemonicArg || process.env.MNEMONIC || "").trim();
+  if (!mnemonic) {
+    throw new Error(
+      "缺少助记词：请在 .env 设置 MNEMONIC=... 或在命令行传入 mnemonic 参数"
+    );
+  }
+  return mnemonic;
+}
+
+function getPassphrase() {
+  return (process.env.MNEMONIC_PASSPHRASE || "").trim();
+}
+
+// BIP39: 生成助记词（12/24） + 演示派生第0个地址 + 打印 account xpub
+async function cmdMnemonicNew() {
+  const words = Number(process.argv[3] || "12");
+  if (![12, 24].includes(words)) {
+    throw new Error("用法：node wallet.mjs mnemonic-new 12  或  node wallet.mjs mnemonic-new 24");
+  }
+
+  const strength = words === 12 ? 128 : 256; // BIP39: 128bit=>12词, 256bit=>24词
+  const mnemonic = generateMnemonic(wordlist, strength);
+  const passphrase = getPassphrase();
+
+  // BIP39: mnemonic + passphrase -> seed (64 bytes)
+  const seed = mnemonicToSeedSync(mnemonic, passphrase);
+
+  // BIP32: seed -> master key -> derive path
+  const root = HDKey.fromMasterSeed(seed);
+
+  // 以太坊常用路径（BIP44风格）：m/44'/60'/0'/0/0
+  const first = root.derive("m/44'/60'/0'/0/0");
+  if (!first.privateKey) throw new Error("派生失败：没有得到 privateKey");
+
+  const pkHex = `0x${Buffer.from(first.privateKey).toString("hex")}`;
+  const account0 = privateKeyToAccount(pkHex);
+
+  // 交易所/钱包常用：暴露 account-level xpub 给“地址生成服务”
+  const accountNode = root.derive("m/44'/60'/0'");
+  const xpub = accountNode.publicExtendedKey; // 可用于派生子地址（非硬化层）
+
+  console.log("=== BIP39 生成助记词 ===");
+  console.log("mnemonic:", mnemonic);
+  console.log("passphrase:", passphrase ? "(已设置，未显示)" : "(未设置)");
+  console.log("");
+  console.log("=== BIP39 生成 seed（演示用） ===");
+  console.log("seed[0..16] (hex):", Buffer.from(seed.slice(0, 16)).toString("hex"), "...");
+  console.log("");
+  console.log("=== BIP32/BIP44 派生示例 ===");
+  console.log("path: m/44'/60'/0'/0/0");
+  console.log("address[0]:", account0.address);
+  console.log("");
+  console.log("=== account-level xpub（常用于在线生成地址，不可签名） ===");
+  console.log("path: m/44'/60'/0'");
+  console.log("xpub:", xpub);
+  console.log("");
+  console.log("下一步：");
+  console.log("  1) 把 mnemonic 写进 .env 的 MNEMONIC=...");
+  console.log("  2) node wallet.mjs mnemonic-addr 0");
+  console.log("  3) node wallet.mjs mnemonic-addr 1");
 }
 
 main();
