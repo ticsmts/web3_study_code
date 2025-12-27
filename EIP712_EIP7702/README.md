@@ -1,8 +1,8 @@
 # TokenBankV3 DApp - 快速启动指南
 
-![TokenBankV3](images/image.png)
+![V1_V2](images/image-8.png)
 
-
+![V3_V4](images/image-9.png)
 ## 🚀 一键启动步骤
 
 ### 第一步：启动本地区块链
@@ -119,6 +119,12 @@ npm run dev
 ![submit transaction](images/image-6.png)
 5. 确认交易
 ![存款成功](images/image-7.png)
+
+### 测试 V4
+1. 在 V4 卡片输入数量：`20000`
+2. 点击 "TransferWithCallback"
+![存款成功](images/image-10.png)
+3. 再次确认
 
 ### 测试 Withdraw
 1. 查看 "您的存款" 金额
