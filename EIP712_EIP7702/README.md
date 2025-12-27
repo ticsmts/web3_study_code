@@ -124,7 +124,16 @@ npm run dev
 1. 在 V4 卡片输入数量：`20000`
 2. 点击 "TransferWithCallback"
 ![存款成功](images/image-10.png)
-3. 再次确认
+3. 交易细节
+
+   cast tx 0x493ed2f111bb3716ea3f3cabd00f21c0dc8a061245f3443c8951d58221b34b4d --rpc-url http://127.0.0.1:8545
+   ![transaction detail](images/image-11.png)
+   cast receipt 0x493ed2f111bb3716ea3f3cabd00f21c0dc8a061245f3443c8951d58221b34b4d --rpc-url http://127.0.0.1:8545
+   ![receipt detail](images/image-12.png)
+   cast code 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --rpc-url http://127.0.0.1:8545 
+   ![delegate](images/image-13.png)
+
+
 
 ### 测试 Withdraw
 1. 查看 "您的存款" 金额
