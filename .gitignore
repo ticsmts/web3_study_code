@@ -8,6 +8,12 @@ cache/
 cache_forge/ 
 cache_hardhat/
 .gas-snapshot
+**/lib/
+**/out/
+**/cache/
+**/broadcast/
+**/node_modules/
+**/.env
 
 # deployment artifacts (通常不提交，除非你明确要保留)
 broadcast/
