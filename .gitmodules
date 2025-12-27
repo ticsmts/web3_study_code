@@ -1,0 +1,6 @@
+[submodule "EIP712_EIP7702/lib/openzeppelin-contracts"]
+	path = EIP712_EIP7702/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "ZZNFTMarketV3/lib/openzeppelin-contracts"]
+	path = ZZNFTMarketV3/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts

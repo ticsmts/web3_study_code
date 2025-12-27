@@ -5,6 +5,9 @@
 # build artifacts / cache
 out/
 cache/
+cache_forge/ 
+cache_hardhat/
+.gas-snapshot
 
 # deployment artifacts (通常不提交，除非你明确要保留)
 broadcast/
@@ -72,6 +75,8 @@ lcov.info
 ########################################
 # OS / Editor junk
 ########################################
+
+.gemini/
 
 .DS_Store
 Thumbs.db
