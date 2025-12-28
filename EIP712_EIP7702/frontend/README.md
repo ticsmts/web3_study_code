@@ -15,7 +15,6 @@
    - 步骤: 调用 `token.transferWithCallback()`
    - ✨ 只需 1 笔交易
    - ⚠️ 需要代币合约支持回调功能（如 ERC777）
-   - 📝 注意：当前 ZZTokenV2 不支持此功能
 
 3. **V3: Permit + PermitDeposit (推荐方式)** ⭐
    - 步骤 1: 离线签名 (EIP-2612 Permit)
@@ -165,7 +164,7 @@ frontend/
 
 ## 📝 注意事项
 
-1. **V2 功能**: 当前 ZZTokenV2 使用标准 ERC20，不支持 transferWithCallback。此功能仅用于演示说明。
+1. **V2 功能**: 当前 ZZTokenV2 使用标准 ERC20，~~ 不支持 transferWithCallback。此功能仅用于演示说明。~~(已支持transferWithCallback)
 
 2. **链 ID**: 确保 MetaMask 连接到 Chain ID 31337 (Anvil)。
 
@@ -186,7 +185,7 @@ frontend/
 
 ### 签名失败
 
-确保你连接的账户有足够的 ETH 和 ZZT 代币。
+确保你连接的账户有足够的 ETH 和 ZZToken 代币。
 
 ## 📄 License
 
