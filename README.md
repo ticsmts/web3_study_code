@@ -256,3 +256,88 @@ NFTMarket项目接入 AppKit 登录
     
     1. 为 NFTMarket 项目添加前端，并接入 AppKit 进行前端登录，并实际操作使用 WalletConnect 进行登录（需要先安装手机端钱包）。
     2. 在 NFTMarket 前端添加上架操作，切换另一个账号后可使用 Token 进行购买 NFT。
+
+---
+
+# 10. viem库学习
+
+文件夹: `erc20_indexer/`
+
+题目链接: 
+https://decert.me/quests/ae220513-c0cb-4d9b-873a-caee1d4b358e
+
+使用 Viem 索引链上ERC20 转账数据并展示 
+
+功能:
+    
+    1. 后端索引出之前自己发行的 ERC20 Token 转账, 并保存到数据库。
+    2. 提供一个 Restful 接口来获取某一个地址的转账记录。
+    3. 实现前端，用户登录后， 从后端查询出该用户地址的转账记录， 并展示。
+
+---
+
+# 11. 钱包相关知识学习
+
+文件夹: `cli_wallet/`
+
+题目链接: 
+https://decert.me/quests/992dae0f-3bdf-4f03-9798-3427234fad95
+
+使用Viem构建一个CLI钱包
+
+功能:
+    
+    模拟一个命令行钱包，基于Viem.js，钱包包含的功能有：
+    1. 生成私钥、查询账户余额
+    2. 构建一个 ERC20 转账的 EIP 1559 交易
+    3. 用生成的账号对 ERC20 转账进行签名
+    4. 发送交易到 Sepolia 网络
+
+---
+
+文件夹: `MultiSigWallet/`
+
+题目链接: 
+https://decert.me/quests/f832d7a2-2806-4ad9-8560-a27ad8570c6f
+
+功能：
+
+    实现⼀个简单的多签合约钱包，合约包含的功能：
+    1. 创建多签钱包时，确定所有的多签持有⼈和签名门槛
+    2. 多签持有⼈可提交提案
+    3. 其他多签⼈确认提案（使⽤交易的⽅式确认即可）
+    4. 达到多签⻔槛、任何⼈都可以执⾏交易
+
+---
+
+# 12. 账户抽象及签名
+
+文件夹: `EIP712_EIP7702/`
+
+题目链接: 
+https://decert.me/quests/2c550f3e-0c29-46f8-a9ea-6258bb01b3ff
+
+功能:
+
+    TokenBank Dapp项目，一个展示四种不同 ERC20 代币存款方式的完整前端应用，使用 RainbowKit + Wagmi + Viem 构建，实现4种存款方式对比：
+    1. V1: Approve + Deposit
+    2. V2: TransferWithCallback
+    3. V3: Permit + PermitDeposit
+    4. V4: EIP-7702 Batch
+
+---
+
+文件夹: `ZZNFTMarketV3/`
+
+题目链接: 
+https://decert.me/quests/fc66ef6c-35db-4ee7-b11d-c3b2d3fa356a
+
+
+功能:
+    
+    实现功能 `permitBuy()` 实现只有离线授权的白名单地址才可以购买 NFT。白名单具体实现逻辑为：
+    1. 项目方给白名单地址签名
+    2. 白名单用户拿到签名信息
+    3. 传给 `permitBuy()` 函数，在`permitBuy()`中判断时候是经过许可的白名单用户，如果是，才可以进行后续购买，否则 revert 。
+
+
