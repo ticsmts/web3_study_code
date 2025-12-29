@@ -1,0 +1,33 @@
+Compiling 1 files with Solc 0.8.28
+Solc 0.8.28 finished in 1.13s
+Compiler run successful!
+
+Ran 10 tests for test/InscriptionFactoryV1.t.sol:InscriptionFactoryV1Test
+[PASS] test_AllInscriptions() (gas: 2356585)
+[PASS] test_DeployInscription() (gas: 1220651)
+[PASS] test_DeployInscription_InvalidParameters() (gas: 48821)
+[PASS] test_GetInscriptionsCount() (gas: 2356540)
+[PASS] test_Initialize() (gas: 21328)
+[PASS] test_MintExceedsMaxSupply() (gas: 1286182)
+[PASS] test_MintInscription() (gas: 1278770)
+[PASS] test_MintInscription_NotFound() (gas: 18824)
+[PASS] test_MultipleMints() (gas: 1315381)
+[PASS] test_OnlyFactoryCanMint() (gas: 1198339)
+Suite result: ok. 10 passed; 0 failed; 0 skipped; finished in 2.93ms (12.18ms CPU time)
+
+Ran 9 tests for test/InscriptionFactoryV2.t.sol:InscriptionFactoryV2Test
+[PASS] test_DeployInscriptionWithPrice() (gas: 423372)
+[PASS] test_MinimalProxyGasSavings() (gas: 393282)
+Logs:
+  V2 Deploy Gas Used: 384225
+
+[PASS] test_MintInsufficientPayment() (gas: 421942)
+[PASS] test_MintWithExcessPayment() (gas: 527802)
+[PASS] test_MintWithPayment() (gas: 520962)
+[PASS] test_UpgradePreservesV1Inscriptions() (gas: 9405245)
+[PASS] test_V1TokensRemainFreeAfterUpgrade() (gas: 9389099)
+[PASS] test_Version() (gas: 15178)
+[PASS] test_WithdrawFees() (gas: 562885)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 3.34ms (8.53ms CPU time)
+
+Ran 2 test suites in 5.42s (6.27ms CPU time): 19 tests passed, 0 failed, 0 skipped (19 total tests)

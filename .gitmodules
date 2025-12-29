@@ -7,3 +7,9 @@
 [submodule "EIP712_EIP7702/lib/permit2"]
 	path = EIP712_EIP7702/lib/permit2
 	url = https://github.com/Uniswap/permit2
+[submodule "InscriptionContractFactory/lib/openzeppelin-contracts"]
+	path = InscriptionContractFactory/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "InscriptionContractFactory/lib/openzeppelin-contracts-upgradeable"]
+	path = InscriptionContractFactory/lib/openzeppelin-contracts-upgradeable
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
