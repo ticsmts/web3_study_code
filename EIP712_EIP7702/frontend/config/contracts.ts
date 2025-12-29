@@ -7,6 +7,8 @@ export const CONTRACTS = {
   BANK_ADDRESS: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
   // SimpleDelegator for EIP-7702 (部署后更新)
   DELEGATOR_ADDRESS: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+  // Permit2 canonical address (same on all chains)
+  PERMIT2_ADDRESS: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
 } as const;
 
 // ZZTokenV2 ABI (包含 ERC20 + EIP-2612 Permit)
@@ -169,6 +171,36 @@ export const BANK_ABI = [
     name: 'Withdraw',
     type: 'event',
   },
+  // TokenBankV4: depositWithPermit2
+  {
+    inputs: [
+      { name: 'amount', type: 'uint256' },
+      { name: 'nonce', type: 'uint256' },
+      { name: 'deadline', type: 'uint256' },
+      { name: 'signature', type: 'bytes' },
+    ],
+    name: 'depositWithPermit2',
+    outputs: [{ name: '', type: 'bool' }],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { name: 'owner', type: 'address' },
+      { name: 'wordPos', type: 'uint256' },
+    ],
+    name: 'getPermit2NonceBitmap',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'permit2',
+    outputs: [{ name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const;
 
 // SimpleDelegator ABI (EIP-7702 batch executor)
@@ -203,3 +235,16 @@ export const DELEGATOR_ABI = [
   },
 ] as const;
 
+// Permit2 ABI (minimal interface for SignatureTransfer)
+export const PERMIT2_ABI = [
+  {
+    inputs: [
+      { name: 'owner', type: 'address' },
+      { name: 'wordPos', type: 'uint256' },
+    ],
+    name: 'nonceBitmap',
+    outputs: [{ name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;

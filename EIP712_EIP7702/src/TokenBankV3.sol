@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 import "./ITokenReceiver.sol";
+import "./IPermit2.sol";
 
 interface IERC20Minimal {
     function allowance(
@@ -143,5 +144,88 @@ contract TokenBankV3 is TokenBankV2 {
 
         emit Deposit(msg.sender, amount);
         return true;
+    }
+}
+
+// TokenBankV4：在 V3 基础上新增 Permit2 存款
+// Permit2 允许任何 ERC20 代币使用签名授权转账（无需 token 内置 permit 支持）
+contract TokenBankV4 is TokenBankV3 {
+    IPermit2 public permit2;
+    address public owner;
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "TokenBankV4: not owner");
+        _;
+    }
+
+    constructor(address tokenAddress) TokenBankV3(tokenAddress) {
+        owner = msg.sender;
+    }
+
+    /// @notice 设置 Permit2 合约地址（仅 owner）
+    function setPermit2(address permit2Address) external onlyOwner {
+        require(
+            permit2Address != address(0),
+            "TokenBankV4: permit2 is zero address"
+        );
+        permit2 = IPermit2(permit2Address);
+    }
+
+    /// @notice 使用 Permit2 签名进行存款
+    /// @dev 用户需要先 approve token 给 Permit2 合约
+    /// @param amount 存款金额
+    /// @param nonce Permit2 nonce（从 nonceBitmap 获取未使用的 nonce）
+    /// @param deadline 签名过期时间
+    /// @param signature 用户对 PermitTransferFrom 的签名
+    function depositWithPermit2(
+        uint256 amount,
+        uint256 nonce,
+        uint256 deadline,
+        bytes calldata signature
+    ) external nonReentrant returns (bool) {
+        require(amount > 0, "TokenBankV4: amount is zero");
+        require(block.timestamp <= deadline, "TokenBankV4: signature expired");
+
+        // 1) 构造 Permit2 参数
+        IPermit2.PermitTransferFrom memory permit = IPermit2
+            .PermitTransferFrom({
+                permitted: IPermit2.TokenPermissions({
+                    token: address(token),
+                    amount: amount
+                }),
+                nonce: nonce,
+                deadline: deadline
+            });
+
+        IPermit2.SignatureTransferDetails memory transferDetails = IPermit2
+            .SignatureTransferDetails({
+                to: address(this),
+                requestedAmount: amount
+            });
+
+        // 2) 通过 Permit2 执行签名转账
+        // Permit2 会验证签名并调用 token.transferFrom(owner, to, amount)
+        permit2.permitTransferFrom(
+            permit,
+            transferDetails,
+            msg.sender,
+            signature
+        );
+
+        // 3) 记账
+        _deposits[msg.sender] += amount;
+        totalDeposits += amount;
+
+        emit Deposit(msg.sender, amount);
+        return true;
+    }
+
+    /// @notice 获取用户的 Permit2 nonce bitmap
+    /// @dev 用于前端查找未使用的 nonce
+    function getPermit2NonceBitmap(
+        address owner,
+        uint256 wordPos
+    ) external view returns (uint256) {
+        return permit2.nonceBitmap(owner, wordPos);
     }
 }

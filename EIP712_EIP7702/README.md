@@ -1,4 +1,4 @@
-# TokenBankV3 DApp - 快速启动指南
+# TokenBankV4 DApp - 五种存款方式演示
 
 ![V1_V2](images/image-8.png)
 
@@ -48,10 +48,12 @@ forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
 
 ```
 === Deployment Summary ===
-Network: Local Anvil
+Network: Local Anvil (Prague hardfork)
 Deployer: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+Permit2: 0x000000000022D473030F116dDEE9F6B43aC78BA3
 ZZTokenV2: 0x5FbDB2315678afecb367f032d93F642f64180aa3
-TokenBankV3: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+TokenBankV4: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+SimpleDelegator: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
 ```
 
 **复制这两个合约地址！**
@@ -89,7 +91,7 @@ npm run dev
 1. 点击 "Connect Wallet" 按钮
 2. 选择 MetaMask
 3. 连接到 Anvil Local 网络
-4. 开始测试三种存款方式！
+4. 开始测试五种存款方式！
 
 ## 💡 快速测试流程
 
@@ -133,7 +135,18 @@ npm run dev
    cast code 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 --rpc-url http://127.0.0.1:8545 
    ![delegate](images/image-13.png)
 
+### 测试 V5 (Permit2) 🔐
+1. 首次使用：在 V5 卡片中点击 "授权" 按钮（授权 Token 给 Permit2）
+2. 在 MetaMask 确认授权交易
+![授权Permit2](images/image-14.png)
+3. 输入存款数量：`50000`
+4. 点击 "🔐 Permit2 签名存款"
+5. 在 MetaMask 中签名 EIP-712 消息（离线，不消耗 gas）
+![签名存款操作](images/image-15.png)
+6. 签名后自动提交交易，在 MetaMask 确认
+![执行存款交易](images/image-16.png)
 
+> 💡 V5 优势：一次授权 Permit2 合约，所有集成应用共享此授权！
 
 ### 测试 Withdraw
 1. 查看 "您的存款" 金额
@@ -142,11 +155,13 @@ npm run dev
 
 ## 🎯 功能特色
 
-- ✨ **V1**: 展示传统的两步流程
-- 🚀 **V3**: 最佳实践 - 一次链上交易
+- ✨ **V1**: 展示传统的 Approve + Deposit 两步流程
+- 🔄 **V2**: TransferWithCallback 一笔交易
+- 🚀 **V3**: EIP-2612 Permit 离线签名 + 一笔交易
+- ⚡ **V4**: EIP-7702 智能账户批量操作
+- 🔐 **V5**: Permit2 统一授权协议（一次授权，所有应用共享）
 - 💰 **实时余额**: 钱包、存款、总额实时更新
 - 🎨 **精美 UI**: 玻璃态效果、渐变色、流畅动画
-- 🔄 **完整流程**: 存款 → 展示 → 取款
 
 ## 🐛 遇到问题？
 

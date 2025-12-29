@@ -8,6 +8,7 @@ import V1Approve from '@/components/V1Approve';
 import V2Callback from '@/components/V2Callback';
 import V3Permit from '@/components/V3Permit';
 import V4EIP7702 from '@/components/V4EIP7702';
+import V5Permit2 from '@/components/V5Permit2';
 import WithdrawSection from '@/components/WithdrawSection';
 
 export default function Home() {
@@ -49,7 +50,7 @@ export default function Home() {
             <div>
               <h1 className="text-4xl font-bold gradient-text">🏦 TokenBank DApp</h1>
               <p className="mt-2" style={{ color: 'var(--text-secondary)' }}>
-                探索四种不同的存款方式
+                探索五种不同的存款方式
               </p>
             </div>
             <ConnectButton />
@@ -103,6 +104,7 @@ export default function Home() {
                 <V2Callback />
                 <V3Permit />
                 <V4EIP7702 />
+                <V5Permit2 />
               </div>
             </div>
 
@@ -116,8 +118,7 @@ export default function Home() {
                 <span>关于这个 DApp</span>
               </h3>
               <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                这个应用演示了四种不同的代币存款方式，帮助你理解 ERC20 授权、回调和 EIP-2612 Permit 签名，以及EIP-7702 智能账户的区别。
-                V3 使用离线签名 + 一笔交易是最优方案。
+                这个应用演示了<strong>五种</strong>不同的代币存款方式，帮助你理解 ERC20 授权、回调、EIP-2612 Permit、Permit2、以及 EIP-7702 智能账户的区别与最佳实践。
               </p>
             </div>
 
