@@ -324,6 +324,7 @@ https://decert.me/quests/2c550f3e-0c29-46f8-a9ea-6258bb01b3ff
     2. V2: TransferWithCallback
     3. V3: Permit + PermitDeposit
     4. V4: EIP-7702 Batch
+    5. V5: Permit2 
 
 ---
 
@@ -339,5 +340,23 @@ https://decert.me/quests/fc66ef6c-35db-4ee7-b11d-c3b2d3fa356a
     1. 项目方给白名单地址签名
     2. 白名单用户拿到签名信息
     3. 传给 `permitBuy()` 函数，在`permitBuy()`中判断时候是经过许可的白名单用户，如果是，才可以进行后续购买，否则 revert 。
+
+---
+文件夹: `InscriptionContractFactory/`
+
+题目链接: 
+https://decert.me/challenge/ac607bb0-53b5-421f-a9df-f3db4a1495f2
+
+功能:
+    V1:
+    
+    实现⼀个可升级的工厂合约，工厂合约有两个方法： 
+    1. deployInscription(string symbol, uint totalSupply, uint perMint) ，该方法用来创建 ERC20 token，（类似模拟铭文的 deploy）， symbol 表示 Token 的名称，totalSupply 表示可发行的数量，perMint 用来控制每次发行的数量，用于控制mintInscription函数每次发行的数量
+    2. mintInscription(address tokenAddr) 用来发行 ERC20 token，每次调用一次，发行perMint指定的数量。
+
+    V2:
+    1. deployInscription 加入一个价格参数 price:  
+    deployInscription(string symbol, uint totalSupply, uint perMint, uint price) ，price 表示发行每个 token 需要支付的费用，
+    2. 使用最小代理的方式以更节约 gas 的方式来创建 ERC20 token，需要同时修改 mintInscription 的实现以便收取每次发行的费用。 
 
 
