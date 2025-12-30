@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "viem": "^2.43.3"
+  },
+  "type": "module"
+}
