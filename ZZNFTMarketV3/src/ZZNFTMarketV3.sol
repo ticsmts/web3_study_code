@@ -79,13 +79,14 @@ contract ZZNFTMarketV3 is IERC721Receiver, EIP712 {
     event SignerUpdated(address indexed oldSigner, address indexed newSigner);
 
     // ============ Structs ============
+    // Gas optimization: Pack bool with address to save 1 storage slot
     struct Listing {
-        address seller;
-        address nft;
-        uint256 tokenId;
-        address payToken;
-        uint256 price;
-        bool active;
+        address seller; // slot 0: 20 bytes
+        bool active; // slot 0: 1 byte (packed with seller)
+        address nft; // slot 1: 20 bytes
+        uint256 tokenId; // slot 2: 32 bytes
+        address payToken; // slot 3: 20 bytes
+        uint256 price; // slot 4: 32 bytes
     }
 
     // ============ State Variables ============
@@ -108,13 +109,16 @@ contract ZZNFTMarketV3 is IERC721Receiver, EIP712 {
             "WhitelistPermit(address buyer,uint256 listingId,uint256 nonce,uint256 deadline)"
         );
 
-    // 防重入锁
-    uint256 private _locked = 1;
+    // 防重入锁 - Gas optimization: Use constants
+    uint256 private constant _NOT_ENTERED = 1;
+    uint256 private constant _ENTERED = 2;
+    uint256 private _locked = _NOT_ENTERED;
+
     modifier nonReentrant() {
-        require(_locked == 1, "REENTRANCY");
-        _locked = 2;
+        require(_locked == _NOT_ENTERED, "REENTRANCY");
+        _locked = _ENTERED;
         _;
-        _locked = 1;
+        _locked = _NOT_ENTERED;
     }
 
     modifier onlyAdmin() {
@@ -161,14 +165,19 @@ contract ZZNFTMarketV3 is IERC721Receiver, EIP712 {
         // 托管NFT到合约
         IZZNFT(nft).safeTransferFrom(msg.sender, address(this), tokenId);
 
-        listingId = nextListingId++;
+        // Gas optimization: Use unchecked for counter increment
+        listingId = nextListingId;
+        unchecked {
+            nextListingId = listingId + 1;
+        }
+
         listings[listingId] = Listing({
             seller: msg.sender,
+            active: true,
             nft: nft,
             tokenId: tokenId,
             payToken: payToken,
-            price: price,
-            active: true
+            price: price
         });
 
         emit Listed(listingId, msg.sender, nft, tokenId, payToken, price);
@@ -185,28 +194,36 @@ contract ZZNFTMarketV3 is IERC721Receiver, EIP712 {
     ) external nonReentrant {
         Listing storage L = listings[listingId];
         if (!L.active) revert ListingNotActive();
-        if (msg.sender == L.seller) revert BuySelf();
-        if (payAmount != L.price) revert WrongPayment();
+
+        // Gas optimization: Cache storage variables
+        address seller_ = L.seller;
+        address nft_ = L.nft;
+        uint256 tokenId_ = L.tokenId;
+        address payToken_ = L.payToken;
+        uint256 price_ = L.price;
+
+        if (msg.sender == seller_) revert BuySelf();
+        if (payAmount != price_) revert WrongPayment();
 
         L.active = false;
 
-        bool ok = IERC20Like(L.payToken).transferFrom(
+        bool ok = IERC20Like(payToken_).transferFrom(
             msg.sender,
-            L.seller,
+            seller_,
             payAmount
         );
         if (!ok) revert TransferFailed();
 
-        IZZNFT(L.nft).safeTransferFrom(address(this), msg.sender, L.tokenId);
+        IZZNFT(nft_).safeTransferFrom(address(this), msg.sender, tokenId_);
 
         emit Bought(
             listingId,
             msg.sender,
-            L.seller,
-            L.nft,
-            L.tokenId,
-            L.payToken,
-            L.price
+            seller_,
+            nft_,
+            tokenId_,
+            payToken_,
+            price_
         );
     }
 
@@ -230,10 +247,22 @@ contract ZZNFTMarketV3 is IERC721Receiver, EIP712 {
         // 2. 获取listing信息
         Listing storage L = listings[listingId];
         if (!L.active) revert ListingNotActive();
-        if (msg.sender == L.seller) revert BuySelf();
+
+        // Gas optimization: Cache storage variables
+        address seller_ = L.seller;
+        address nft_ = L.nft;
+        uint256 tokenId_ = L.tokenId;
+        address payToken_ = L.payToken;
+        uint256 price_ = L.price;
+
+        if (msg.sender == seller_) revert BuySelf();
 
         // 3. 获取买家当前nonce，并在验证前递增（防止重放）
-        uint256 currentNonce = nonces[msg.sender]++;
+        // Gas optimization: Use unchecked for nonce increment
+        uint256 currentNonce = nonces[msg.sender];
+        unchecked {
+            nonces[msg.sender] = currentNonce + 1;
+        }
 
         // 4. 构造EIP-712签名消息
         bytes32 structHash = keccak256(
@@ -257,23 +286,23 @@ contract ZZNFTMarketV3 is IERC721Receiver, EIP712 {
         // 7. 执行购买
         L.active = false;
 
-        bool ok = IERC20Like(L.payToken).transferFrom(
+        bool ok = IERC20Like(payToken_).transferFrom(
             msg.sender,
-            L.seller,
-            L.price
+            seller_,
+            price_
         );
         if (!ok) revert TransferFailed();
 
-        IZZNFT(L.nft).safeTransferFrom(address(this), msg.sender, L.tokenId);
+        IZZNFT(nft_).safeTransferFrom(address(this), msg.sender, tokenId_);
 
         emit PermitBought(
             listingId,
             msg.sender,
-            L.seller,
-            L.nft,
-            L.tokenId,
-            L.payToken,
-            L.price
+            seller_,
+            nft_,
+            tokenId_,
+            payToken_,
+            price_
         );
     }
 
