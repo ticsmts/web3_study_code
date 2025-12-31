@@ -4,7 +4,7 @@
 
 ## 1. PoW 实践题 
 
-文件: `pow_decert_01.py`  
+文件: `BlockchainBasics\pow_decert_01.py`  
 
 题目链接: https://decert.me/quests/45779e03-7905-469e-822e-3ec3746d9ece 
 
@@ -17,7 +17,7 @@ python3 pow_decert_01.py
 ```
 ---
 
-文件: `pow_decert_cli.py` 
+文件: `BlockchainBasics\pow_decert_cli.py` 
 
 功能:  给pow_decert_01.py添加命令行功能
 
@@ -28,7 +28,7 @@ python3 pow_decert_cli.py --name ticsmts --zeros 5
 ```
 
 ---
-文件: pow_rsa_sign.py  
+文件: `BlockchainBasics\pow_rsa_sign.py`  
 
 题目链接: https://decert.me/quests/45779e03-7905-469e-822e-3ec3746d9ece
 
@@ -40,7 +40,7 @@ python3 pow_rsa_sign.py --name ticsmts --zeros 5
 
 ---
 ## 2. 模拟实现最小的区块链
-文件: `mini_blockchain.py`
+文件: `BlockchainBasics\mini_blockchain.py`
 
 题目链接: https://decert.me/quests/ed2d8324-54b0-4b7a-9cee-5e97d3c30030
 
@@ -56,7 +56,7 @@ python3 mini_blockchain.py
 
 ---
 ## 3. Solidity 
-文件: `helloWorld_Solidity.sol`
+文件: `Hello_Solidity.sol`
 
 题目链接: https://decert.me/quests/61289231665986005978714272641295754558731174328007379661370918963875971676821
 
