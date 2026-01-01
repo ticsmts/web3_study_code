@@ -11,17 +11,17 @@
 
 ## 功能展示
 
-![钱包登录](images\image-1.png)
+![钱包登录](images/image-1.png)
 
-![存款1-50](images\image.png)
+![存款1-50](images/image.png)
 
-![存款2-66](images\image-2.png)
+![存款2-66](images/image-2.png)
 
-![存款3-99](images\image-3.png)
+![存款3-99](images/image-3.png)
 
-![存款4-100](images\image-5.png)
+![存款4-100](images/image-5.png)
 
-![排行榜](images\image-6.png)
+![排行榜](images/image-6.png)
 
 ## 技术栈
 
