@@ -1,0 +1,26 @@
+# Compiler files
+cache/
+out/
+
+# Dependencies - not uploaded to git
+lib/
+
+# Environment
+.env
+
+# Node modules (frontend)
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Broadcast files (optional, may contain private info)
+# broadcast/
+
+# Logs
+*.log
