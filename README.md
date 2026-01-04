@@ -2,7 +2,7 @@
 
 记录我在学习web3过程中的coding。
 
-## 1. PoW 实践题 
+## 1. PoW 实践
 
 文件: `BlockchainBasics\pow_decert_01.py`  
 
@@ -342,14 +342,36 @@ https://decert.me/quests/fc66ef6c-35db-4ee7-b11d-c3b2d3fa356a
     3. 传给 `permitBuy()` 函数，在`permitBuy()`中判断时候是经过许可的白名单用户，如果是，才可以进行后续购买，否则 revert 。
 
 ---
+文件夹: `AirdropMerkleNFTMarket/`
+
+题目链接: 
+https://decert.me/quests/faa435a5-f462-4f92-a209-3a7e8fdc4d81
+
+功能:
+    
+    实现AirdopMerkleNFTMarket 合约，功能如下：
+
+    1. 基于 Merkle 树验证某用户是否在白名单中
+    2. 在白名单中的用户可以使用上架指定价格的优惠 50% 的Token 来购买 NFT， Token 需支持 permit 授权。
+    3. 使用 multicall( delegateCall 方式) 一次性调用两个方法：
+        • permitPrePay() : 调用token的 permit 进行授权
+        • claimNFT() : 通过默克尔树验证白名单，并利用 permitPrePay 的授权，转入 token 转出 NFT 。
+
+---
+# 13. GAS优化
+    文件: `ZZNFTMarketV3/README.md`
+
+---
+# 14. 可升级合约
+
 文件夹: `InscriptionContractFactory/`
 
 题目链接: 
 https://decert.me/challenge/ac607bb0-53b5-421f-a9df-f3db4a1495f2
 
 功能:
-    V1:
-    
+
+    V1:    
     实现⼀个可升级的工厂合约，工厂合约有两个方法： 
     1. deployInscription(string symbol, uint totalSupply, uint perMint) ，该方法用来创建 ERC20 token，（类似模拟铭文的 deploy）， symbol 表示 Token 的名称，totalSupply 表示可发行的数量，perMint 用来控制每次发行的数量，用于控制mintInscription函数每次发行的数量
     2. mintInscription(address tokenAddr) 用来发行 ERC20 token，每次调用一次，发行perMint指定的数量。
@@ -359,4 +381,17 @@ https://decert.me/challenge/ac607bb0-53b5-421f-a9df-f3db4a1495f2
     deployInscription(string symbol, uint totalSupply, uint perMint, uint price) ，price 表示发行每个 token 需要支付的费用，
     2. 使用最小代理的方式以更节约 gas 的方式来创建 ERC20 token，需要同时修改 mintInscription 的实现以便收取每次发行的费用。 
 
+---
+
+文件夹: `UpgradeableNFTMarket/`
+
+题目链接: 
+https://decert.me/quests/ddbdd3c4-a633-49d7-adf9-34a6292ce3a8
+
+功能:
+    
+    1. 编写一个可升级的 ERC721 合约
+    2. 实现⼀个可升级的 NFT 市场合约：
+        • V1 合约采用托管式对NFT进行上架购买
+        • V2 加⼊离线签名上架 NFT 功能⽅法（签名内容：tokenId， 价格），实现⽤户⼀次性使用 setApproveAll 给 NFT 市场合约，每个 NFT 上架时仅需使⽤签名上架
 
