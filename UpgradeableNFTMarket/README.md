@@ -150,7 +150,121 @@ contract NFTMarketV1 is
 2. 调用代理的 `upgradeToAndCall(newImpl, initData)`
 3. 代理存储保持不变，逻辑指向新实现
 
-### 2. EIP-712 签名上架 (V2 核心)
+> 📖 **详细部署说明**: 查看 [DEPLOYMENT.md](./DEPLOYMENT.md) 了解完整的 UUPS 代理部署、升级流程和 Sepolia 测试网配置。
+
+### 2. V1 托管式上架 (Escrow)
+
+V1 采用传统的托管模式，NFT 在上架时转移到市场合约进行托管。
+
+```solidity
+// NFTMarketV1.sol
+
+function list(
+    address nftContract,
+    uint256 tokenId,
+    address payToken,
+    uint256 price
+) external nonReentrant returns (uint256 listingId) {
+    // 1. 验证价格
+    if (price == 0) revert ZeroPrice();
+    
+    // 2. 验证所有权
+    address owner = IERC721(nftContract).ownerOf(tokenId);
+    if (owner != msg.sender) revert NotOwner();
+    
+    // 3. 转移 NFT 到市场合约（托管）
+    IERC721(nftContract).safeTransferFrom(
+        msg.sender,
+        address(this),  // 市场合约地址
+        tokenId
+    );
+    
+    // 4. 创建上架记录
+    listingId = nextListingId++;
+    listings[listingId] = Listing({
+        seller: msg.sender,
+        nft: nftContract,
+        tokenId: tokenId,
+        payToken: payToken,
+        price: price,
+        active: true
+    });
+    
+    emit Listed(listingId, msg.sender, nftContract, tokenId, payToken, price);
+}
+```
+
+**托管模式特点**:
+- ✅ 简单直接，逻辑清晰
+- ✅ NFT 安全托管在合约中
+- ❌ 每次上架需要转移 NFT (gas 成本高)
+- ❌ 卖家失去 NFT 控制权
+
+**购买流程**:
+
+```solidity
+function buyNFT(uint256 listingId, uint256 payAmount) external nonReentrant {
+    Listing storage L = listings[listingId];
+    
+    // 验证
+    if (!L.active) revert ListingNotActive();
+    if (msg.sender == L.seller) revert BuySelf();
+    if (payAmount != L.price) revert WrongPayment();
+    
+    L.active = false;
+    
+    // 转移代币：买家 -> 卖家
+    IERC20(L.payToken).transferFrom(msg.sender, L.seller, payAmount);
+    
+    // 转移 NFT：市场合约 -> 买家
+    IERC721(L.nft).safeTransferFrom(address(this), msg.sender, L.tokenId);
+    
+    emit Bought(listingId, msg.sender, L.price);
+}
+```
+
+**前端实现** (`page.tsx`):
+
+```typescript
+// 1. 授权 NFT 给市场
+const handleApproveNFT = (tokenId: string) => {
+  writeContract({
+    address: CONTRACT_ADDRESSES.NFT,
+    abi: ZZNFTABI,
+    functionName: 'approve',
+    args: [CONTRACT_ADDRESSES.MARKET, BigInt(tokenId)]
+  });
+};
+
+// 2. 上架 NFT (托管模式)
+const handleList = () => {
+  if (!listTokenId || !listPrice) return;
+  writeContract({
+    address: CONTRACT_ADDRESSES.MARKET,
+    abi: NFTMarketABI,
+    functionName: 'list',
+    args: [
+      CONTRACT_ADDRESSES.NFT,
+      BigInt(listTokenId),
+      CONTRACT_ADDRESSES.TOKEN,
+      parseEther(listPrice)
+    ]
+  });
+  setTxStatus('上架 NFT (托管模式)...');
+};
+```
+
+**用户流程**:
+1. 授权单个 NFT 或批量授权 (`setApprovalForAll`)
+2. 调用 `list()` 上架
+3. NFT 转移到市场合约
+4. 买家调用 `buyNFT()` 购买
+
+---
+
+### 3. EIP-712 签名上架 (V2 核心)
+
+V2 版本引入 EIP-712 签名上架，用户只需一次 `setApprovalForAll`，之后每次上架通过离线签名完成。
 
 **关键修复**: 使用 `EIP712Upgradeable` 而非 `EIP712`，确保代理模式下 domain separator 正确。
 
