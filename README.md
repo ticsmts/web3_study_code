@@ -395,3 +395,46 @@ https://decert.me/quests/ddbdd3c4-a633-49d7-adf9-34a6292ce3a8
         • V1 合约采用托管式对NFT进行上架购买
         • V2 加⼊离线签名上架 NFT 功能⽅法（签名内容：tokenId， 价格），实现⽤户⼀次性使用 setApproveAll 给 NFT 市场合约，每个 NFT 上架时仅需使⽤签名上架
 
+---
+
+# 15. solidity 安全与审计
+
+文件夹: `openspace_ctf_challenge/`
+
+题目链接: 
+https://decert.me/quests/b5368265-89b3-4058-8a57-a41bde625f5b
+
+功能:
+    
+    阅读代码Vault.sol及测试用例，在测试用例中testExploit函数添加一些代码，设法取出预先部署的Vault合约内的所有资金。
+
+---
+
+文件夹: `BigBankV2/`
+
+题目链接: 
+https://decert.me/quests/072fccb4-a976-4cf9-933c-c4ef14e0f6eb
+
+功能:
+    
+    使用 ChainLink Automation、Gelato或OpenZepplin Defender Action实现一个自动化任务，自动化任务实现：当 Bank 合约的存款超过x(可自定义数量)时，转移一半的存款到指定的地址（如 Owner）。
+
+---
+
+# 16. DEFI相关
+
+文件夹: `Vesting/`
+
+题目链接: 
+https://decert.me/quests/58aec80f-8980-434a-b549-566003367694
+
+功能:
+    
+    编写一个Vesting合约（可参考 OpenZepplin Vesting 相关合约），相关的参数有：
+        1. beneficiary：受益人
+        2. 锁定的 ERC20 地址
+        3. Cliff：12 个月
+        4. 线性释放：接下来的 24 个月，从第13个月起开始每月解锁 1/24 的 ERC20
+        5. Vesting 合约包含的方法 release() 用来释放当前解锁的 ERC20 给受益人
+        6. Vesting 合约部署后，开始计算Cliff，并转入 100 万 ERC20 资产。
+        7. 要求在 Foundry 包含时间模拟测试
