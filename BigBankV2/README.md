@@ -16,15 +16,20 @@
 ```
 BigBankV2/
 ├── src/
-│   └── BigBankV2.sol           # 主合约 (261 行)
+│   ├── BigBankV2.sol           # 主合约 (已更新权限控制)
+│   ├── BigBankV2Automation.sol # Chainlink 自动化逻辑合约 [NEW]
+│   └── interfaces/
+│       └── AutomationCompatibleInterface.sol # 极简自动化接口
 ├── test/
-│   └── BigBankV2.t.sol         # 测试文件 (14 tests)
+│   ├── BigBankV2.t.sol         # 核心逻辑测试
+│   └── BigBankV2Automation.t.sol # 自动化逻辑测试 [NEW]
 ├── script/
-│   └── Deploy.s.sol            # 部署脚本
+│   ├── Deploy.s.sol            # 主合约部署脚本
+│   └── DeployAutomation.s.sol  # 自动化合约部署脚本 [NEW]
 └── frontend/                    # Vite + React 前端
     ├── src/
     │   ├── App.tsx             # 主应用
-    │   ├── wagmi.ts            # Web3 配置
+    │   ├── wagmi.ts            # Web3 配置 (已指向 Sepolia)
     │   └── components/         # React 组件
     └── package.json
 ```
@@ -80,6 +85,19 @@ anvil
 
 # 终端 2: 部署合约
 forge script script/Deploy.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
+
+### 3.1 Sepolia 测试网部署
+
+```bash
+# 1. 部署主合约
+forge script script/Deploy.s.sol --rpc-url $SEPOLIA_RPC_URL --broadcast --private-key $PRIVATE_KEY
+
+# 2. 部署自动化合约 (需在 .env 中设置 BANK_ADDRESS)
+forge script script/DeployAutomation.s.sol --rpc-url $SEPOLIA_RPC_URL --broadcast --private-key $PRIVATE_KEY
+
+# 3. 关联合约 (使用 cast 调用 setAutomationContract)
+cast send <BANK_ADDRESS> "setAutomationContract(address)" <AUTOMATION_ADDRESS> --private-key $PRIVATE_KEY --rpc-url $SEPOLIA_RPC_URL
+```
 ```
 
 ### 4. 配置前端
@@ -87,7 +105,8 @@ forge script script/Deploy.s.sol --rpc-url http://127.0.0.1:8545 --broadcast
 将部署输出的合约地址更新到 `frontend/src/wagmi.ts`:
 
 ```typescript
-export const CONTRACT_ADDRESS = '0x...' as const;
+// Sepolia 配置示例
+export const CONTRACT_ADDRESS = '0xa805FD120EB3D78A17a6AAcFD920294C3B3959B8' as const;
 ```
 
 ### 5. 启动前端
@@ -577,6 +596,48 @@ function setAdmin(address newAdmin) external onlyOwner {
 
 ---
 
+### 7. Chainlink Automation 自动化监控 [NEW]
+
+为了实现资金的自动化管理，项目集成了 Chainlink Automation，当满足特定条件时自动执行资金划转。
+
+#### 7.1 自动化逻辑设计
+
+- **监控目标**: BigBankV2 合约的 ETH 余额。
+- **触发条件 (checkUpkeep)**:
+  1. **余额阈值**: 余额 > `threshold` (默认 0.1 ETH)。
+  2. **时间间隔**: 距离上次执行超过 `MIN_INTERVAL` (默认 1 小时)。
+- **执行动作 (performUpkeep)**:
+  - 自动将合约余额的 **50%** 转移到预设的 `recipient` 地址（通常是 Owner）。
+
+#### 7.2 核心代码实现
+
+**自动化合约 (`BigBankV2Automation.sol`)**:
+```solidity
+function checkUpkeep(bytes calldata) external view returns (bool upkeepNeeded, bytes memory performData) {
+    uint256 balance = bank.balance;
+    // 检查是否超过阈值且满足时间间隔
+    bool thresholdMet = balance > threshold;
+    bool intervalMet = (block.timestamp - lastPerformTime) >= MIN_INTERVAL;
+    upkeepNeeded = thresholdMet && intervalMet;
+    performData = abi.encode(balance);
+}
+
+function performUpkeep(bytes calldata performData) external {
+    // 重新验证逻辑以防止恶意触发
+    require(bank.balance > threshold, "Threshold not met");
+    // 执行一半余额提取动作...
+    IBigBankV2(bank).withdraw(transferAmount, recipient);
+}
+```
+
+#### 7.3 安全性保障
+
+1. **权限隔离**: `BigBankV2` 中增加了 `onlyOwnerOrAutomation` 修饰器，仅允许 Owner 或指定的 Automation 合约调用提现功能。
+2. **链上重校验**: 在 `performUpkeep` 中再次检查余额和时间间隔，防止恶意触发。
+3. **极简接口**: 使用本地 `AutomationCompatibleInterface` 避免引入庞大的外部依赖库（~1GB）。
+
+---
+
 ## 📊 数据结构对比
 
 ### 链表 vs 数组
@@ -637,28 +698,29 @@ const { data: topDepositors } = useReadContract({
 
 ## 🧪 测试用例
 
-### 存款测试 (4 tests)
+### 核心逻辑测试 (14 tests)
 - ✅ `test_DepositViaDeposit` - 通过 deposit() 存款
 - ✅ `test_DepositViaReceive` - 通过直接转账存款
 - ✅ `test_RevertIfDepositTooSmall` - 最小金额验证
 - ✅ `test_MultipleDeposits` - 多次存款累加
-
-### 链表测试 (4 tests)
 - ✅ `test_SingleUserInTopList` - 单用户排行榜
 - ✅ `test_TopListSortedByBalance` - 排序正确性
 - ✅ `test_TopListMaxSize10` - 最大容量限制
 - ✅ `test_TopListUpdatesOnAdditionalDeposit` - 动态更新
-
-### 管理功能测试 (4 tests)
 - ✅ `test_OnlyOwnerCanWithdraw` - 权限验证
 - ✅ `test_OwnerWithdraw` - 提现功能
 - ✅ `test_SetAdmin` - 转移管理权
 - ✅ `test_OnlyOwnerCanSetAdmin` - 权限验证
-
-### 查询功能测试 (2 tests)
 - ✅ `test_GetBalance` - 查询余额
 - ✅ `test_GetMyBalance` - 查询自己余额
 - ✅ `test_GetTotalBalance` - 查询合约总额
+
+### 自动化监控测试 (BigBankV2Automation.t.sol - 11 tests)
+- ✅ `test_CheckUpkeepReturnsTrueWhenAboveThreshold` - 满足阈值触发
+- ✅ `test_PerformUpkeepTransfersHalfBalance` - 自动划转一半资金
+- ✅ `test_PerformUpkeepRevertsWhenIntervalNotMet` - 时间间隔保护
+- ✅ `test_AutomationContractCanWithdraw` - 权限授权测试
+- ✅ ... 以及其他边界条件测试共 11 项全部通过
 
 ---
 

@@ -11,10 +11,11 @@ pragma solidity ^0.8.20;
  * 3. 用可迭代链表保存存款金额前10名用户
  */
 contract BigBankV2 {
-    // ============ 状态变量 ============
-
     /// @notice 管理员地址
     address public owner;
+
+    /// @notice Automation 合约地址（用于 Chainlink Automation）
+    address public automationContract;
 
     /// @notice 每个地址的存款金额
     mapping(address => uint256) public balances;
@@ -39,11 +40,20 @@ contract BigBankV2 {
     event Deposit(address indexed user, uint256 amount, uint256 newBalance);
     event Withdraw(address indexed to, uint256 amount);
     event AdminChanged(address indexed oldAdmin, address indexed newAdmin);
+    event AutomationContractSet(address indexed automation);
 
     // ============ 修饰器 ============
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
+        _;
+    }
+
+    modifier onlyOwnerOrAutomation() {
+        require(
+            msg.sender == owner || msg.sender == automationContract,
+            "Not authorized"
+        );
         _;
     }
 
@@ -236,8 +246,11 @@ contract BigBankV2 {
 
     // ============ 管理功能 ============
 
-    /// @notice 管理员提现
-    function withdraw(uint256 amount, address payable to) external onlyOwner {
+    /// @notice 管理员或 Automation 合约提现
+    function withdraw(
+        uint256 amount,
+        address payable to
+    ) external onlyOwnerOrAutomation {
         require(amount > 0, "Amount must be > 0");
         require(
             address(this).balance >= amount,
@@ -248,6 +261,12 @@ contract BigBankV2 {
         require(ok, "Transfer failed");
 
         emit Withdraw(to, amount);
+    }
+
+    /// @notice 设置 Automation 合约地址
+    function setAutomationContract(address _automation) external onlyOwner {
+        automationContract = _automation;
+        emit AutomationContractSet(_automation);
     }
 
     /// @notice 转移管理员

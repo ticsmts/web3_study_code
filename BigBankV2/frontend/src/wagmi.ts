@@ -1,31 +1,17 @@
 import { createConfig, http } from 'wagmi';
-import { localhost } from 'wagmi/chains';
+import { sepolia } from 'wagmi/chains';
 import { injected } from 'wagmi/connectors';
 
-// 本地 Anvil 链配置
-const anvilChain = {
-    ...localhost,
-    id: 31337,
-    name: 'Anvil Local',
-    nativeCurrency: {
-        name: 'Ether',
-        symbol: 'ETH',
-        decimals: 18,
-    },
-    rpcUrls: {
-        default: { http: ['http://127.0.0.1:8545'] },
-    },
-} as const;
-
+// Sepolia 测试网配置
 export const config = createConfig({
-    chains: [anvilChain],
+    chains: [sepolia],
     connectors: [
         injected({
             target: 'metaMask',
         }),
     ],
     transports: {
-        [anvilChain.id]: http('http://127.0.0.1:8545'),
+        [sepolia.id]: http(),
     },
 });
 
@@ -80,5 +66,5 @@ export const BigBankV2ABI = [
     },
 ] as const;
 
-// 部署后更新此地址
-export const CONTRACT_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3' as const;
+// Sepolia 测试网部署地址
+export const CONTRACT_ADDRESS = '0xa805FD120EB3D78A17a6AAcFD920294C3B3959B8' as const;
