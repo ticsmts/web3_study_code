@@ -83,6 +83,7 @@ lcov.info
 ########################################
 
 .gemini/
+.claude/
 
 .DS_Store
 Thumbs.db
