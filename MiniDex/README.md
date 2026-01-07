@@ -33,6 +33,14 @@
 | 玻璃态前端 | ✅ 完成 | Next.js 16 + React组件 |
 | 前端集成 | ✅ 完成 | 实时价格、余额、交易记录 |
 
+---
+
+## 项目展示
+
+![MiniDex](./images/image.png)
+
+![MiniDex2](./images/image-1.png)
+
 ### 项目结构
 
 ```
