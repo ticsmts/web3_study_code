@@ -1,0 +1,22 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.20"
+optimizer = true
+optimizer_runs = 999999
+evm_version = "paris"
+
+# Uniswap V2 uses some unchecked math and assembly optimizations
+via_ir = false
+ignored_error_codes = [3881, 5883, 8936]
+
+# Allow file write operations for deployment script
+fs_permissions = [{ access = "read-write", path = "./" }]
+
+[rpc_endpoints]
+anvil = "http://127.0.0.1:8545"
+
+[etherscan]
+# Add your Etherscan API key if needed for verification
+# mainnet = { key = "${ETHERSCAN_API_KEY}" }
