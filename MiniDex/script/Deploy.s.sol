@@ -5,6 +5,7 @@ import {Script, console} from "forge-std/Script.sol";
 import {UniswapV2Factory} from "../src/core/UniswapV2Factory.sol";
 import {UniswapV2Router02} from "../src/periphery/UniswapV2Router02.sol";
 import {MockERC20} from "../src/mocks/MockERC20.sol";
+import {MockWETH} from "../src/mocks/MockWETH.sol";
 import {UniswapV2Pair} from "../src/core/UniswapV2Pair.sol";
 
 /**
@@ -24,7 +25,7 @@ contract Deploy is Script {
     UniswapV2Router02 public router;
     MockERC20 public tokenA; // Mock USDC
     MockERC20 public tokenB; // Mock DAI
-    MockERC20 public weth; // Mock WETH
+    MockWETH public weth; // Mock WETH with deposit/withdraw
 
     function run() public {
         uint256 deployerPrivateKey = vm.envOr(
@@ -67,9 +68,9 @@ contract Deploy is Script {
         require(initCodeHash == factoryHash, "Hash mismatch!");
         console.log("[OK] Hash verified!\n");
 
-        // 3. Deploy Mock WETH
+        // 3. Deploy Mock WETH (with deposit/withdraw support for MemeFactory integration)
         console.log("Step 2: Deploying Mock WETH...");
-        weth = new MockERC20("Wrapped Ether", "WETH", 1000000 * 1e18);
+        weth = new MockWETH();
         console.log("WETH deployed at:", address(weth));
 
         // 4. Deploy Router02
@@ -113,6 +114,10 @@ contract Deploy is Script {
         );
         console.log("[OK] Added 1000 USDC + 1000 DAI");
 
+        // Deposit ETH to get WETH for liquidity (20 ETH total)
+        weth.deposit{value: 20 ether}();
+        console.log("[OK] Deposited 20 ETH to WETH");
+
         // Add USDC/WETH liquidity: 30000 USDC + 10 WETH (1 WETH = 3000 USDC)
         tokenA.approve(address(router), 30000 * 1e18);
         weth.approve(address(router), 10 * 1e18);
@@ -142,6 +147,10 @@ contract Deploy is Script {
             block.timestamp + 1000
         );
         console.log("[OK] Added 30000 DAI + 10 WETH (1 WETH = 3000 DAI)");
+
+        // Extra WETH for frontend testing (kept by deployer)
+        weth.deposit{value: 5_000 ether}();
+        console.log("[OK] Deposited 5,000 ETH to WETH for deployer testing balance");
 
         vm.stopBroadcast();
 
