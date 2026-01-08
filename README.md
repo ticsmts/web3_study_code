@@ -438,3 +438,40 @@ https://decert.me/quests/58aec80f-8980-434a-b549-566003367694
         5. Vesting 合约包含的方法 release() 用来释放当前解锁的 ERC20 给受益人
         6. Vesting 合约部署后，开始计算Cliff，并转入 100 万 ERC20 资产。
         7. 要求在 Foundry 包含时间模拟测试
+
+
+---
+
+文件夹: `MiniDEX/`
+
+题目链接: 
+    https://decert.me/quests/fa82f574-7f3e-4566-8916-dd7aff17cb01
+
+功能:
+    
+    1. 阅读并分析 Uniswap V2 源代码，并为主要合约添加代码注释。
+    2. 在本地部署 Uniswap V2 核心及周边源代码
+
+---
+
+文件夹: `Erc20MemeFactory/`
+
+题目链接: 
+    https://decert.me/quests/df4886bc-65c6-45fb-ad0c-3389a9f99bf2
+
+功能:
+    
+    实现现一个 LaunchPad 平台：
+        1. 使用 ERC1167 最小代理部署 Meme 代币
+        2. 除了之前的 mintMeme() 可以购买 meme 外，添加一个方法: `buyMeme()`，以便在 Unswap 的价格优于设定的起始价格时，用户可调用该函数来购买 Meme.（调用Uniswap的Swap函数）
+
+---
+
+文件夹: `StakingPool/`
+
+题目链接: 
+    https://decert.me/quests/e76599d5-a30c-4678-ba92-fe43c56df1db
+
+功能:
+    
+    编写 StakingPool 合约，实现 Stake 和 Unstake 方法，允许任何人质押ETH来赚钱 KK Token。其中 KK Token 是每一个区块产出 10 个，产出的 KK Token 需要根据质押时长和质押数量来公平分配。用户质押 ETH 的可存入的一个借贷市场赚取利息.
