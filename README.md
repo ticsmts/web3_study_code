@@ -475,3 +475,17 @@ https://decert.me/quests/58aec80f-8980-434a-b549-566003367694
 功能:
     
     编写 StakingPool 合约，实现 Stake 和 Unstake 方法，允许任何人质押ETH来赚钱 KK Token。其中 KK Token 是每一个区块产出 10 个，产出的 KK Token 需要根据质押时长和质押数量来公平分配。用户质押 ETH 的可存入的一个借贷市场赚取利息.
+
+---
+
+文件夹: `RebaseDeflationaryToken/`
+
+题目链接: 
+    https://decert.me/quests/2d4df0b6-17dc-4e5b-8f3a-728ed855e292
+
+功能:  
+
+    实现一个通缩的Token(ERC20)，用来理解rebase型 Token 的实现原理：
+    1. 起始发行量为 1 亿，税后每过一年在上一年的发行量基础上下降 1%
+    2. rebase 方法进行通缩
+    3. balanceOf() 可反应通缩后的用户的正确余额。
