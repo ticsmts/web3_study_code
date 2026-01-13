@@ -13,6 +13,18 @@
 - **欧式期权**：只能在到期日当天（24h 窗口）行权
 - **USDT 结算**：按固定行权价支付 USDT 获得 ETH
 
+## 测试
+
+![alt text](images/image-1.png)
+
+![alt text](images/image-2.png)
+
+![alt text](images/image-3.png)
+
+![alt text](images/image-4.png)
+
+
+
 ## 行权计算详解
 
 ### 核心公式
