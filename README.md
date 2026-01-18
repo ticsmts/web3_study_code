@@ -521,3 +521,16 @@ https://decert.me/quests/58aec80f-8980-434a-b549-566003367694
         • Bank合约中有提取资金withdraw()，该方法仅管理员可调用。
         • 治理 Gov 合约作为 Bank 管理员, Gov 合约使用 Token 投票来执行响应的动作。
         • 通过发起提案从Bank合约资金，实现管理Bank的资金。
+
+---
+# 17. 链上数据分析
+
+文件夹: `NFTMarketSubgraph/`
+
+题目链接:
+   https://decert.me/quests/092623aa-c9b8-42e9-9f8d-e83be451d35a
+
+功能: 
+ 
+    部署 NFTMarket 合约到Sepolia 测试网，开源
+    使⽤ TheGraph 索引 NFTMarket 的上架List和成交 Sold记录，并建立关联。
