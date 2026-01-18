@@ -1,0 +1,31 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ZZNFTMarketV3
+    network: sepolia
+    source:
+      address: "0x78d2e8d39d3bd68fe62f1f7c94e86ab63573a4c4"
+      abi: ZZNFTMarketV3
+      startBlock: 10070537
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.8
+      language: wasm/assemblyscript
+      entities:
+        - Listing
+        - Sale
+      abis:
+        - name: ZZNFTMarketV3
+          file: ./abis/ZZNFTMarketV3.json
+      eventHandlers:
+        - event: Listed(indexed uint256,indexed address,indexed address,uint256,address,uint256)
+          handler: handleListed
+        - event: Bought(indexed uint256,indexed address,indexed address,address,uint256,address,uint256)
+          handler: handleBought
+        - event: PermitBought(indexed uint256,indexed address,indexed address,address,uint256,address,uint256)
+          handler: handlePermitBought
+      file: ./src/mapping.ts

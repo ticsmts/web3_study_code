@@ -1,0 +1,37 @@
+# Listing Entity - 上架记录 (mutable because status changes)
+type Listing @entity(immutable: false) {
+  id: ID!                          # listingId (string)
+  listingId: BigInt!               # 原始 listingId
+  seller: Bytes!                   # 卖家地址
+  nft: Bytes!                      # NFT 合约地址
+  tokenId: BigInt!                 # NFT tokenId
+  payToken: Bytes!                 # 支付代币地址
+  price: BigInt!                   # 价格
+  status: String!                  # ACTIVE / SOLD
+  
+  # 元信息
+  createdAt: BigInt!               # 上架时间（timestamp）
+  createdBlock: BigInt!            # 上架区块号
+  createdTx: Bytes!                # 上架交易哈希
+  
+  # 反向关系 - 由 Sale.listing 派生
+  sales: [Sale!]! @derivedFrom(field: "listing")
+}
+
+# Sale Entity - 成交记录 (immutable once created)
+type Sale @entity(immutable: true) {
+  id: ID!                          # txHash-logIndex
+  listing: Listing!                # 关联的 Listing
+  buyer: Bytes!                    # 买家地址
+  seller: Bytes!                   # 卖家地址（冗余存储，便于查询）
+  nft: Bytes!                      # NFT 合约地址
+  tokenId: BigInt!                 # NFT tokenId
+  payToken: Bytes!                 # 支付代币地址
+  price: BigInt!                   # 成交价格
+  isPermitBuy: Boolean!            # 是否为白名单购买
+  
+  # 元信息
+  soldAt: BigInt!                  # 成交时间
+  soldBlock: BigInt!               # 成交区块号
+  soldTx: Bytes!                   # 成交交易哈希
+}

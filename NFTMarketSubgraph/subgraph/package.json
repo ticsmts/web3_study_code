@@ -1,0 +1,16 @@
+{
+  "name": "nftmarket-subgraph",
+  "license": "MIT",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --studio nftmarket-subgraph",
+    "create-local": "graph create --node http://localhost:8020/ nftmarket-subgraph",
+    "remove-local": "graph remove --node http://localhost:8020/ nftmarket-subgraph",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 nftmarket-subgraph"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.74.0",
+    "@graphprotocol/graph-ts": "0.32.0"
+  }
+}
